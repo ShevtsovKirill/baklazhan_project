@@ -1,8 +1,8 @@
 # 🍆 Baklazhan Market
 
-A single-page online grocery store — a concept storefront inspired by **Arbuz.kz**, rebuilt with its own brand identity (dark theme + vivid violet accent, eggplant as the mascot).
+**Baklazhan Market** is an original online grocery store with its own product vision, brand identity and interface — an independent project built from scratch, not based on or borrowed from any existing service.
 
-Everything lives in **one self-contained `index.html`** file: markup, styles and logic are inline, with no build step, no backend and no external dependencies.
+The whole brand is our own: a dark theme with a vivid violet accent and the eggplant as our mascot. Everything lives in **one self-contained `index.html`** file — markup, styles and logic are inline, with no build step, no backend and no external dependencies.
 
 ---
 
@@ -16,6 +16,12 @@ Everything lives in **one self-contained `index.html`** file: markup, styles and
 - **Persistent cart** — saved in the browser via `localStorage`, survives page reloads.
 - **Responsive** — adapts from desktop down to phone width.
 - **Dark violet theme** with friendly rounded typography.
+
+---
+
+## 🎨 Design & originality
+
+The design, color system, layout, copy and brand concept were created by our team specifically for this project. The violet palette, the eggplant mascot, the component styling and the overall look are our own original work — nothing here is copied from another product.
 
 ---
 
@@ -89,4 +95,6 @@ This is a **front-end demo**. It has no backend, so:
 - [ ] Mobile app (iOS / Android)
 
 ---
+
+*An original project · 2026 · © Baklazhan Market. All rights reserved.*
 

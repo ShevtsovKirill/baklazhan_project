@@ -1,0 +1,57 @@
+/* Шапка: фиолетовая полоса сверху, прилипает при прокрутке */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--gradient-brand);
+  color: white;
+  box-shadow: 0 4px 20px rgba(60, 10, 140, 0.25);
+}
+
+.row {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* правая часть шапки: тумблер, профиль, корзина */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.profileButton {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
+  display: grid;
+  place-items: center;
+  color: white;
+}
+
+.profileButton:hover {
+  background: rgba(255, 255, 255, 0.26);
+}
+
+/* телефон: поиск переносится на отдельную строку */
+@media (max-width: 620px) {
+  .row {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .profileButton {
+    display: none;
+  }
+
+  .actions {
+    margin-left: auto;
+  }
+}

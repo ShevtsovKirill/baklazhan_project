@@ -1,0 +1,12 @@
+/* «Ничего не найдено» */
+.empty {
+  text-align: center;
+  padding: 70px 20px;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.icon {
+  font-size: 54px;
+  margin-bottom: 10px;
+}

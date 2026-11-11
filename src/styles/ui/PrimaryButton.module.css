@@ -1,0 +1,28 @@
+/* Большая фиолетовая кнопка («Оформить заказ», «Мне есть 21 — войти») */
+.button {
+  background: var(--color-primary);
+  color: white;
+  height: 54px;
+  border-radius: 15px;
+  font-weight: 800;
+  font-size: 16px;
+  width: 100%;
+}
+
+.button:hover {
+  background: var(--color-primary-dark);
+}
+
+.button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* винный вариант — для окна проверки возраста */
+.button.wine {
+  background: #9b1b3a;
+}
+
+.button.wine:hover {
+  background: #6e0f26;
+}

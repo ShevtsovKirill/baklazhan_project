@@ -1,0 +1,33 @@
+/* =====================================================
+   ОБЩИЕ СТИЛИ
+   Только базовые правила для всего сайта.
+   Стили компонентов лежат рядом, в папках styles/<раздел>/*.module.css
+   ===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  min-height: 100vh;
+  display: flex; /* чтобы подвал всегда был внизу */
+  flex-direction: column;
+}
+
+/* сбрасываем стандартный вид кнопок и ссылок */
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+}

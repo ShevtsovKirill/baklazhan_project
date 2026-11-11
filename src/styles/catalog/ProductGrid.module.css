@@ -1,0 +1,14 @@
+/* Сетка карточек: столько колонок, сколько влезет */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+/* телефон: товары по 2 в ряд */
+@media (max-width: 620px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+}

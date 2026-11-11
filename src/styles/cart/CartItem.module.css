@@ -1,0 +1,61 @@
+/* Строка товара в корзине */
+.item {
+  background: var(--color-surface);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.image {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+}
+
+.text {
+  flex: 1;
+  min-width: 0;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+
+.unitPrice {
+  display: block;
+  color: var(--color-muted);
+  font-weight: 600;
+  font-size: 12.5px;
+  margin-top: 2px;
+}
+
+/* кнопки − 2 + */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.stepper button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--color-bg);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-primary-text);
+}
+
+.sum {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 15px;
+  min-width: 62px;
+  text-align: right;
+}

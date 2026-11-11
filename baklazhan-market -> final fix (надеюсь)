@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Баклажан Маркет</title>
+<style>
+/* шрифты: Baloo 2 для заголовков и цен, Manrope для всего остального */
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+/* ===== ЦВЕТА =====
+   все цвета сайта в одном месте, дальше они используются как var(--имя) */
+:root {
+  --fiolet: #8b2fff;                       /* главный фиолетовый */
+  --fiolet-temny: #5b12c4;                 /* тёмный фиолетовый (градиенты, наведение) */
+  --fiolet-tekst: #7c3aed;                 /* фиолетовый для текста */
+  --fiolet-svetly: rgba(139,47,255,.11);   /* бледный фиолетовый фон */
+  --fon: #f4f4f7;                          /* фон страницы */
+  --fon-kartochki: #ffffff;                /* фон карточек и блоков */
+  --fon-2: #ececf1;                        /* дорожка ползунка */
+  --tekst: #1d1d1f;                        /* основной текст */
+  --seryi: #6e6e76;                        /* второстепенный текст */
+  --liniya: #e4e4ea;                       /* рамки */
+  --ten: 0 10px 30px rgba(50,20,100,.10);  /* тень при наведении */
+  --navedenie: #f1e8ff;                    /* фон кнопки корзины при наведении */
+}
+
+/* ===== ОБЩЕЕ ===== */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fon);
+  color: var(--tekst);
+  font-family: 'Manrope', Arial, sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  display: flex;            /* чтобы подвал всегда был внизу */
+  flex-direction: column;
+}
+
+/* сбрасываем стандартный вид кнопок и ссылок */
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+a { color: inherit; }
+
+/* ===== ШАПКА (фиолетовая полоса сверху, прилипает при прокрутке) ===== */
+.shapka {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: linear-gradient(90deg, var(--fiolet-temny), var(--fiolet));
+  color: white;
+  box-shadow: 0 4px 20px rgba(60,10,140,.25);
+}
+.shapka-ryad {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* логотип: кружок с баклажаном + надпись */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Baloo 2', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+  color: white;
+  flex-shrink: 0;
+}
+.logo-znak {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.18);
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+}
+.logo em { color: #e2ccff; font-style: normal; }
+
+/* строка поиска */
+.poisk {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,.16);
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  padding: 0 16px;
+  height: 46px;
+}
+.poisk:focus-within { border-color: rgba(255,255,255,.8); background: rgba(255,255,255,.24); }
+.poisk input {
+  border: none;
+  outline: none;
+  background: none;
+  width: 100%;
+  font-size: 15px;
+  font-family: inherit;
+  color: white;
+}
+.poisk input::placeholder { color: rgba(255,255,255,.72); }
+
+/* правая часть шапки: тумблер, профиль, корзина */
+.knopki { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.profil {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: rgba(255,255,255,.16);
+  display: grid;
+  place-items: center;
+  color: white;
+}
+.profil:hover { background: rgba(255,255,255,.26); }
+
+.korzina-knopka {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  color: var(--fiolet-temny);
+  height: 46px;
+  padding: 0 20px 0 16px;
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 15px;
+}
+.korzina-knopka:hover { background: var(--navedenie); }
+
+/* кружок с количеством товаров на кнопке корзины */
+.schet {
+  background: var(--fiolet);
+  color: white;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+
+/* ===== ТУМБЛЕР РЕЖИМОВ (как на айфоне, но на 3 положения) ===== */
+.rezhim-zona {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: rgba(0,0,0,.16);
+  padding: 6px 12px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* название режима рядом с тумблером */
+.rezhim-slovo {
+  font-weight: 800;
+  font-size: 13px;
+  white-space: nowrap;
+  min-width: 64px;
+}
+
+/* сама дорожка, поделена на 3 секции */
+.tumbler {
+  position: relative;
+  display: flex;
+  width: 114px;
+  height: 34px;
+  border-radius: 17px;
+  background: rgba(255,255,255,.2);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.25);
+  cursor: pointer;
+  flex-shrink: 0;
+  touch-action: none; /* чтобы на телефоне страница не прокручивалась, пока тянем кружок */
+  user-select: none;
+  -webkit-user-select: none;
+}
+.tumbler:focus-visible { outline: 2px solid white; outline-offset: 3px; }
+
+/* значки секций: 🥗 🍔 21 */
+.tumbler-metka {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 800;
+  opacity: .6;
+  pointer-events: none;
+}
+
+/* белый кружок, который ездит по дорожке */
+.tumbler-tochka {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: white;
+  border: 2.5px solid white;
+  box-shadow: 0 3px 10px rgba(0,0,0,.35);
+  pointer-events: none;
+  transition: transform .32s cubic-bezier(.3,1.35,.5,1); /* пружинистый прыжок */
+}
+/* пока тянем пальцем — кружок без задержки */
+.tumbler.tyanem .tumbler-tochka { transition: none; }
+
+/* ===== ОСНОВНАЯ ЧАСТЬ ===== */
+.konteiner { max-width: 1240px; margin: 0 auto; padding: 0 20px; width: 100%; }
+.osnova { flex: 1; }
+
+/* хлебные крошки: «Главная · ... · Каталог» */
+.kroshki { padding: 18px 0 4px; font-size: 13px; color: var(--seryi); font-weight: 600; }
+.kroshki b { color: var(--tekst); }
+
+/* предупреждение про алкоголь (только в режиме 21+) */
+.vnimanie {
+  margin-top: 12px;
+  background: #2a1206;
+  border: 1px solid #5a2a0e;
+  color: #ffb38a;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ряд кнопок-категорий, прокручивается вбок */
+.kategorii {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 14px 0 6px;
+  scrollbar-width: none;
+}
+.kat-knopka {
+  flex-shrink: 0;
+  background: var(--fon-kartochki);
+  border: 1.5px solid var(--liniya);
+  padding: 9px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--tekst);
+  white-space: nowrap;
+}
+.kat-knopka:hover { border-color: var(--fiolet); color: var(--fiolet-tekst); }
+.kat-knopka.vazhno { border-color: var(--fiolet); }                                  /* выделенная категория */
+.kat-knopka.aktiv { background: var(--fiolet); border-color: var(--fiolet); color: white; } /* выбранная сейчас */
+
+/* две колонки: фильтры слева, товары справа */
+.setka {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 26px;
+  padding: 18px 0 60px;
+}
+
+/* ===== ФИЛЬТРЫ (левая колонка) ===== */
+.kolonka { display: flex; flex-direction: column; gap: 14px; }
+.filtr {
+  background: var(--fon-kartochki);
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid var(--liniya);
+}
+.filtr h3 { font-family: 'Baloo 2', Arial, sans-serif; margin: 0 0 14px; font-size: 17px; }
+
+/* мин и макс цена над ползунком */
+.ceny { display: flex; justify-content: space-between; margin-bottom: 12px; }
+.ceny span {
+  background: var(--fiolet-svetly);
+  color: var(--fiolet-tekst);
+  font-weight: 800;
+  font-size: 13px;
+  padding: 5px 11px;
+  border-radius: 8px;
+}
+
+/* ползунок цены */
+input[type=range] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--fon-2);
+  outline: none;
+}
+/* кружок ползунка (для Chrome/Safari и для Firefox) */
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--fiolet);
+  border: 3px solid white;
+  cursor: pointer;
+}
+input[type=range]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--fiolet);
+  border: 3px solid white;
+  cursor: pointer;
+}
+
+/* галочки: настоящий checkbox спрятан, рисуем свой квадратик */
+.galka {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--tekst);
+}
+.galka input { display: none; }
+.kvadrat {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--liniya);
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+}
+.kvadrat::after { content: "✓"; opacity: 0; }
+.galka input:checked + .kvadrat { background: var(--fiolet); border-color: var(--fiolet); }
+.galka input:checked + .kvadrat::after { opacity: 1; }
+
+/* ===== КАТАЛОГ (правая колонка) ===== */
+/* заголовок + сортировка */
+.verh-kataloga {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.verh-kataloga h1 { font-family: 'Baloo 2', Arial, sans-serif; margin: 0; font-size: 30px; }
+.opisanie { color: var(--seryi); font-weight: 600; margin: 0 0 16px; }
+.sortirovka {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--fon-kartochki);
+  border: 1px solid var(--liniya);
+  border-radius: 12px;
+  padding: 0 14px;
+  height: 42px;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+.sortirovka select {
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 13.5px;
+  outline: none;
+  cursor: pointer;
+  color: var(--tekst);
+}
+.sortirovka option { background: var(--fon-kartochki); color: var(--tekst); }
+
+/* раздел каталога: заголовок, счётчик, «Смотреть все», товары */
+.razdel { margin-bottom: 34px; }
+.razdel-shapka { display: flex; align-items: baseline; gap: 10px; margin: 6px 0 4px; flex-wrap: wrap; }
+.razdel-shapka h2 { font-family: 'Baloo 2', Arial, sans-serif; font-size: 23px; margin: 0; }
+.razdel-chislo {
+  background: var(--fiolet-svetly);
+  color: var(--fiolet-tekst);
+  font-weight: 800;
+  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.smotret { margin-left: auto; color: var(--fiolet-tekst); font-weight: 800; font-size: 13px; }
+.razdel-tekst { color: var(--seryi); font-weight: 600; font-size: 13px; margin: 0 0 12px; }
+
+/* особый раздел в рамке (салаты, десерты, закуски) */
+.razdel.osobyi {
+  background: var(--fon-kartochki);
+  border: 1.5px solid var(--fiolet-svetly);
+  border-radius: 22px;
+  padding: 18px;
+}
+.razdel.osobyi .kartochka { background: var(--fon); }
+
+/* сетка карточек: столько колонок, сколько влезет */
+.tovary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+/* ===== КАРТОЧКА ТОВАРА ===== */
+.kartochka {
+  background: var(--fon-kartochki);
+  border-radius: 18px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform .14s, box-shadow .14s;
+}
+.kartochka:hover { transform: translateY(-3px); box-shadow: var(--ten); }
+
+/* квадрат с эмодзи товара */
+.kartinka {
+  aspect-ratio: 1;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 76px;
+  margin-bottom: 12px;
+}
+
+/* значок скидки слева сверху */
+.skidka {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #ff5a3c;
+  color: white;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 8px;
+}
+/* значок 21+ справа сверху */
+.metka-21 {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0,0,0,.55);
+  color: white;
+  border: 1px solid rgba(255,255,255,.25);
+  font-weight: 800;
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 7px;
+}
+
+/* название и строка «★ рейтинг · страна · объём» */
+.nazvanie { font-weight: 700; font-size: 14.5px; line-height: 1.3; margin-bottom: 8px; min-height: 38px; }
+.info { font-size: 12.5px; color: var(--seryi); font-weight: 600; margin-bottom: 14px; }
+.info .zvezda { color: #ffb020; }
+.info b { color: var(--tekst); }
+
+/* низ карточки: цена слева, кнопка справа */
+.niz { margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cena { font-family: 'Baloo 2', Arial, sans-serif; font-weight: 800; font-size: 20px; line-height: 1; }
+.stara-cena { font-size: 12px; color: var(--seryi); text-decoration: line-through; font-weight: 600; margin-top: 3px; }
+
+/* кнопка «+» (товара ещё нет в корзине) */
+.dobavit {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--fiolet-svetly);
+  color: var(--fiolet-tekst);
+  font-size: 26px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.dobavit:hover { background: var(--fiolet); color: white; }
+
+/* счётчик «− 2 +» (товар уже в корзине) */
+.schet-knopki {
+  display: flex;
+  align-items: center;
+  background: var(--fiolet);
+  border-radius: 13px;
+  height: 44px;
+  color: white;
+  font-weight: 800;
+  overflow: hidden;
+}
+.schet-knopki button { width: 38px; height: 44px; color: white; font-size: 20px; }
+.schet-knopki button:hover { background: var(--fiolet-temny); }
+.schet-knopki span { min-width: 30px; text-align: center; font-size: 15px; }
+
+/* ===== КАРТОЧКА В РЕЖИМЕ 21+ =====
+   светлая с винным оттенком и тонкой красной полоской снизу */
+.kartochka.kartochka-21,
+.razdel.osobyi .kartochka.kartochka-21 {
+  background: linear-gradient(180deg, #ffffff 0%, #fff4f6 100%);
+  border: 1px solid #f6d5dc;
+  box-shadow: inset 0 -3px 0 #e5243b; /* красная полоска снизу */
+  overflow: hidden;
+}
+.kartochka.kartochka-21:hover {
+  border-color: #eeb3c0;
+  box-shadow: inset 0 -3px 0 #e5243b, 0 12px 28px rgba(155,27,58,.14);
+}
+/* !important — потому что у картинки фон задан прямо в теге (style="background:...") */
+.kartochka-21 .kartinka {
+  background: radial-gradient(circle at 50% 40%, #ffffff 0%, #fbe8ec 75%) !important;
+  border: 1px solid #f6d5dc;
+}
+.kartochka-21 .info b { color: #9b1b3a; }
+.kartochka-21 .cena { color: #9b1b3a; }
+.kartochka-21 .metka-21 { background: #e5243b; border-color: transparent; }
+.kartochka-21 .dobavit { background: #fbe3e8; color: #c41e3a; }
+.kartochka-21 .dobavit:hover { background: #c41e3a; color: #ffffff; }
+.kartochka-21 .schet-knopki { background: #c41e3a; }
+.kartochka-21 .schet-knopki button:hover { background: #9b1b3a; }
+
+/* «Ничего не найдено» */
+.nichego { text-align: center; padding: 70px 20px; color: var(--seryi); font-weight: 600; }
+.nichego div { font-size: 54px; margin-bottom: 10px; }
+
+/* ===== ПОДВАЛ (низ сайта) ===== */
+.podval {
+  background: linear-gradient(90deg, var(--fiolet-temny), var(--fiolet));
+  color: white;
+}
+/* 4 колонки: логотип, покупателям, компания, контакты */
+.podval-shapka {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 36px 20px 20px;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 28px;
+}
+.podval-shapka p { margin: 10px 0 0; opacity: .82; font-weight: 600; line-height: 1.5; max-width: 320px; }
+.podval h4 { margin: 4px 0 12px; font-family: 'Baloo 2', Arial, sans-serif; font-size: 17px; }
+.podval a { display: block; text-decoration: none; opacity: .82; font-weight: 600; padding: 4px 0; }
+.podval a:hover { opacity: 1; text-decoration: underline; }
+/* самая нижняя строка: © и слоган */
+.podval-nizu {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 16px 20px 22px;
+  border-top: 1px solid rgba(255,255,255,.2);
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+/* ===== КОРЗИНА (выезжает справа) ===== */
+/* затемнение страницы за корзиной */
+.fon-temnyi {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,6,20,.5);
+  display: none;
+  z-index: 50;
+}
+/* сама панель: спрятана за правым краем, класс .otkryta выдвигает её */
+.korzina {
+  position: fixed;
+  top: 0;
+  right: -430px;
+  height: 100%;
+  width: 420px;
+  max-width: 100%;
+  background: var(--fon);
+  z-index: 60;
+  transition: right .28s;
+  display: flex;
+  flex-direction: column;
+}
+.korzina.otkryta { right: 0; }
+.korzina-shapka {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, var(--fiolet-temny), var(--fiolet));
+  color: white;
+}
+.korzina-shapka h2 { font-family: 'Baloo 2', Arial, sans-serif; margin: 0; font-size: 22px; }
+.zakryt {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.18);
+  color: white;
+  font-size: 18px;
+}
+
+/* список товаров в корзине */
+.korzina-tovary { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.stroka-korziny {
+  background: var(--fon-kartochki);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.mini-kartinka {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+}
+.stroka-korziny .tekst { flex: 1; min-width: 0; font-weight: 700; font-size: 13.5px; }
+.stroka-korziny .tekst small { display: block; color: var(--seryi); font-weight: 600; font-size: 12.5px; margin-top: 2px; }
+.mini-knopki { display: flex; align-items: center; gap: 4px; font-weight: 800; font-size: 13px; }
+.mini-knopki button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: var(--fon);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--fiolet-tekst);
+}
+.stroka-summa { font-family: 'Baloo 2', Arial, sans-serif; font-weight: 800; font-size: 15px; min-width: 62px; text-align: right; }
+
+/* «Корзина пуста» */
+.pusto { text-align: center; color: var(--seryi); padding: 70px 20px; font-weight: 600; }
+.pusto div { font-size: 60px; margin-bottom: 12px; }
+
+/* итог внизу корзины: суммы и кнопка «Оформить» */
+.korzina-itog {
+  background: var(--fon-kartochki);
+  border-top: 1px solid var(--liniya);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.stroka { display: flex; justify-content: space-between; align-items: baseline; color: var(--seryi); font-weight: 600; }
+.stroka span:last-child { color: var(--tekst); }
+.stroka.itogo { color: var(--tekst); font-weight: 800; font-size: 16px; }
+.stroka.itogo span:last-child { font-family: 'Baloo 2', Arial, sans-serif; font-size: 24px; }
+
+/* большая фиолетовая кнопка */
+.glav-knopka {
+  background: var(--fiolet);
+  color: white;
+  height: 54px;
+  border-radius: 15px;
+  font-weight: 800;
+  font-size: 16px;
+  width: 100%;
+}
+.glav-knopka:hover { background: var(--fiolet-temny); }
+.glav-knopka:disabled { opacity: .4; cursor: not-allowed; }
+.dostavka-stroka { font-size: 12px; color: var(--fiolet-tekst); font-weight: 700; text-align: center; }
+.pasport-stroka { font-size: 12px; color: #ff9f6b; font-weight: 700; text-align: center; }
+
+/* ===== ОКНО ПРОВЕРКИ ВОЗРАСТА ===== */
+/* тёмный размытый фон на весь экран */
+.fon-okna {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: rgba(0,0,0,.72);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+/* само окошко */
+.okno {
+  width: 420px;
+  max-width: 100%;
+  background: #111113;
+  color: #f2f2f4;
+  border: 1px solid #2a2a2f;
+  border-radius: 24px;
+  padding: 28px 24px 22px;
+  text-align: center;
+}
+/* винный круг «21+» */
+.znak-21 {
+  width: 74px;
+  height: 74px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #4a0816, #9b1b3a);
+  font-family: 'Baloo 2', Arial, sans-serif;
+  font-weight: 800;
+  font-size: 26px;
+}
+.okno h2 { font-family: 'Baloo 2', Arial, sans-serif; margin: 0 0 6px; font-size: 25px; }
+.okno p { margin: 0 0 18px; color: #a1a1a8; font-weight: 600; line-height: 1.45; }
+.okno label { display: block; text-align: left; font-weight: 800; font-size: 12.5px; color: #a1a1a8; margin-bottom: 8px; }
+/* три выпадающих списка: день, месяц, год */
+.blok-daty { display: grid; grid-template-columns: 1fr 1.6fr 1.2fr; gap: 8px; margin-bottom: 12px; }
+.blok-daty select {
+  height: 46px;
+  border-radius: 12px;
+  border: 1.5px solid #2a2a2f;
+  background: #1c1c1f;
+  color: #f2f2f4;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 0 10px;
+}
+.okno .glav-knopka { background: #9b1b3a; }
+.okno .glav-knopka:hover { background: #6e0f26; }
+.oshibka { min-height: 20px; color: #ff6b5a; font-weight: 700; font-size: 13px; margin-bottom: 10px; }
+.otmena { margin-top: 8px; width: 100%; height: 46px; border-radius: 14px; color: #c9c9cf; font-weight: 700; font-size: 14px; }
+.otmena:hover { background: #1c1c1f; }
+.snoska { margin-top: 12px; font-size: 11.5px; color: #6e6e76; font-weight: 600; }
+
+/* ===== ВСПЛЫВАШКА ВНИЗУ («Добавлено в корзину») ===== */
+.podskazka {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  background: var(--tekst);
+  color: var(--fon);
+  padding: 13px 22px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 95;
+  display: none;
+}
+
+/* ===== ПОД ТЕЛЕФОНЫ И ПЛАНШЕТЫ ===== */
+/* узкий экран: прячем название режима у тумблера */
+@media (max-width: 980px) {
+  .rezhim-slovo { display: none; }
+}
+/* планшет: фильтры прячем, подвал в 2 колонки */
+@media (max-width: 860px) {
+  .setka { grid-template-columns: 1fr; }
+  .kolonka { display: none; }
+  .podval-shapka { grid-template-columns: 1fr 1fr; }
+}
+/* телефон: поиск на отдельной строке, товары по 2 в ряд */
+@media (max-width: 620px) {
+  .shapka-ryad { flex-wrap: wrap; gap: 12px; padding: 12px 16px; }
+  .poisk { order: 3; flex-basis: 100%; }
+  .logo { font-size: 22px; }
+  .konteiner { padding: 0 16px; }
+  .korzina-knopka .slovo { display: none; }
+  .korzina-knopka { padding: 0 14px; }
+  .profil { display: none; }
+  .knopki { margin-left: auto; }
+  .tovary { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kartinka { font-size: 56px; }
+  .razdel.osobyi { padding: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== ШАПКА: логотип, поиск, тумблер режимов, профиль, корзина ===== -->
+<header class="shapka">
+  <div class="shapka-ryad">
+    <!-- логотип -->
+    <div class="logo"><span class="logo-znak">🍆</span>баклажан<em>.kz</em></div>
+
+    <!-- поиск: при вводе вызывается poiskIzmenilsya() -->
+    <div class="poisk">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
+      <input id="poisk" type="text" placeholder="Искать..." oninput="poiskIzmenilsya()">
+    </div>
+
+    <div class="knopki">
+      <!-- тумблер режимов: Полезное / Вредное / 21+ -->
+      <div class="rezhim-zona">
+        <div class="tumbler" id="tumbler" role="slider" tabindex="0" aria-label="Режим магазина" aria-valuemin="0" aria-valuemax="2" aria-valuenow="0">
+          <span class="tumbler-metka">🥗</span>
+          <span class="tumbler-metka">🍔</span>
+          <span class="tumbler-metka">21</span>
+          <span class="tumbler-tochka" id="tumbler-tochka"></span>
+        </div>
+        <span class="rezhim-slovo" id="rezhim-slovo">Полезное</span>
+      </div>
+
+      <!-- профиль (пока без действия) -->
+      <button class="profil" aria-label="Профиль">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      </button>
+
+      <!-- кнопка корзины со счётчиком товаров -->
+      <button class="korzina-knopka" onclick="otkrytKorzinu()">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.2 12.4a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L22 7H6"/></svg>
+        <span class="slovo">Корзина</span>
+        <span class="schet" id="schet">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== ОСНОВНАЯ ЧАСТЬ ===== -->
+<main class="osnova">
+  <div class="konteiner">
+    <!-- хлебные крошки (текст ставит скрипт) -->
+    <div class="kroshki" id="kroshki"></div>
+
+    <!-- предупреждение для режима 21+. Если меняете MIN_VOZRAST в скрипте — поменяйте и текст здесь -->
+    <div class="vnimanie" id="vnimanie" style="display:none">⚠️ Чрезмерное употребление алкоголя вредит вашему здоровью. Курение убивает. Продажа алкоголя и табака лицам младше 21 года запрещена.</div>
+
+    <!-- кнопки категорий (создаёт скрипт) -->
+    <nav class="kategorii" id="kategorii"></nav>
+
+    <div class="setka">
+      <!-- левая колонка: фильтры -->
+      <aside class="kolonka">
+        <!-- фильтр по цене -->
+        <div class="filtr">
+          <h3>Цена, ₸</h3>
+          <div class="ceny"><span id="minCena"></span><span id="maxCena"></span></div>
+          <input type="range" id="polzunok" min="0" max="100" value="100" step="10" oninput="polzunokDvigaetsya()">
+        </div>
+        <!-- галочки -->
+        <div class="filtr">
+          <h3>Подборки</h3>
+          <label class="galka"><input type="checkbox" id="galka-skidka" onchange="galochkiIzmenilis()"><span class="kvadrat"></span>Только со скидкой</label>
+          <label class="galka"><input type="checkbox" id="galka-kz" onchange="galochkiIzmenilis()"><span class="kvadrat"></span>Казахстан 🇰🇿</label>
+          <label class="galka"><input type="checkbox" id="galka-eko" onchange="galochkiIzmenilis()"><span class="kvadrat"></span><span id="slovo-eko">Эко / фермерское</span></label>
+        </div>
+        <!-- список стран (создаёт скрипт) -->
+        <div class="filtr">
+          <h3>Страны</h3>
+          <div id="strany"></div>
+        </div>
+      </aside>
+
+      <!-- правая колонка: каталог -->
+      <section>
+        <div class="verh-kataloga">
+          <h1 id="zagolovok">Каталог</h1>
+          <div class="sortirovka">
+            Сортировка:
+            <select id="sortirovka" onchange="sortirovkaIzmenilas()">
+              <option value="obychno">Рекомендуемые</option>
+              <option value="deshevle">Сначала дешевле</option>
+              <option value="dorozhe">Сначала дороже</option>
+              <option value="reiting">По рейтингу</option>
+            </select>
+          </div>
+        </div>
+        <p class="opisanie" id="opisanie"></p>
+        <!-- сюда скрипт вставляет карточки товаров -->
+        <div id="katalog"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- ===== ПОДВАЛ ===== -->
+<footer class="podval">
+  <div class="podval-shapka">
+    <div>
+      <div class="logo"><span class="logo-znak">🍆</span>баклажан<em>.kz</em></div>
+      <p id="podval-tekst"></p>
+    </div>
+    <div>
+      <h4>Покупателям</h4>
+      <a href="#">Доставка и оплата</a>
+    </div>
+    <div>
+      <h4>Компания</h4>
+      <a href="#">Поставщикам</a>
+    </div>
+    <div>
+      <h4>Контакты</h4>
+      <a href="#">+7 776 723 7799</a>
+      <a href="#">Алматы, ежедневно</a>
+      <a href="#">8:00 – 23:00</a>
+    </div>
+  </div>
+  <div class="podval-nizu">
+    <span>© 2026 баклажан.kz</span>
+    <span id="podval-slogan"></span>
+  </div>
+</footer>
+
+<!-- ===== КОРЗИНА ===== -->
+<!-- затемнение: клик по нему закрывает корзину -->
+<div class="fon-temnyi" id="fon-temnyi" onclick="zakrytKorzinu()"></div>
+<div class="korzina" id="korzina">
+  <div class="korzina-shapka">
+    <h2>Корзина</h2>
+    <button class="zakryt" onclick="zakrytKorzinu()" aria-label="Закрыть">✕</button>
+  </div>
+  <!-- список товаров (создаёт скрипт) -->
+  <div class="korzina-tovary" id="spisok-korziny"></div>
+  <!-- итог: показывается, только если корзина не пустая -->
+  <div class="korzina-itog" id="itog-korziny" style="display:none">
+    <div class="stroka"><span>Товары</span><span id="summa-tovarov">0 ₸</span></div>
+    <div class="stroka"><span>Доставка</span><span id="summa-dostavki">0 ₸</span></div>
+    <div class="stroka itogo"><span>Итого</span><span id="itogo">0 ₸</span></div>
+    <div class="dostavka-stroka" id="dostavka-fraza"></div>
+    <div class="pasport-stroka" id="pasport-fraza" style="display:none">🔞 Курьер попросит удостоверение личности при получении</div>
+    <button class="glav-knopka" onclick="oformitZakaz()">Оформить заказ →</button>
+  </div>
+</div>
+
+<!-- ===== ОКНО ПРОВЕРКИ ВОЗРАСТА (при первом входе в 21+) ===== -->
+<div class="fon-okna" id="okno-21">
+  <div class="okno">
+    <div class="znak-21">21+</div>
+    <h2>Подтвердите возраст</h2>
+    <p>В этом режиме продаются алкоголь и табачная продукция. Укажите дату рождения, чтобы продолжить.</p>
+    <label>Дата рождения</label>
+    <!-- списки дней, месяцев и лет заполняет скрипт -->
+    <div class="blok-daty">
+      <select id="den"></select>
+      <select id="mesyac"></select>
+      <select id="god"></select>
+    </div>
+    <div class="oshibka" id="oshibka"></div>
+    <button class="glav-knopka" id="knopka-ok" onclick="proveritVozrast()">Мне есть 21 — войти</button>
+    <button class="otmena" onclick="otmenaVozrast()">Вернуться назад</button>
+    <div class="snoska">Продажа алкоголя и табака лицам младше 21 года запрещена. При получении курьер проверит документ.</div>
+  </div>
+</div>
+
+<!-- всплывающее сообщение внизу экрана -->
+<div class="podskazka" id="podskazka"></div>
+
+<script>
+// =====================================================
+//  НАСТРОЙКИ
+// =====================================================
+var MIN_VOZRAST = 21;              // в Казахстане алкоголь с 21 года
+var BESPLATNAYA_DOSTAVKA = 8000;   // от этой суммы доставка бесплатная
+var CENA_DOSTAVKI = 799;           // иначе доставка стоит столько
+
+// три режима магазина, по порядку как на тумблере
+var REZHIMY = ["poleznoe", "vrednoe", "21"];
+var NAZVANIE_REZHIMA = ["Полезное", "Вредное", "21+"];
+
+// тексты, которые меняются вместе с режимом
+var TEKSTY = {
+  poleznoe: {
+    kroshki: "Главная · Полезные продукты · <b>Каталог</b>",
+    poisk: "Искать полезное — овощи, экзотика, салаты…",
+    eko: "Эко / фермерское",
+    podval: "Свежие овощи, фрукты, экзотика, йогурты и готовые салаты с доставкой по Алматы.",
+    slogan: "🌱 Ешьте разноцветно — минимум 5 порций овощей и фруктов в день",
+    zagolovok: "Всё полезное",
+    nichego: "🧺",
+    pusto: '<div>🛒</div>Корзина пуста.<br>Добавьте свежие продукты!'
+  },
+  vrednoe: {
+    kroshki: "Главная · Вредное, но вкусное · <b>Каталог</b>",
+    poisk: "Искать — бургеры, пицца, десерты…",
+    eko: "Хиты",
+    podval: "Фастфуд, сладости и десерты с доставкой по Алматы. Иногда можно!",
+    slogan: "🍩 Иногда можно — но не забывайте про овощи",
+    zagolovok: "Что-нибудь вкусное",
+    nichego: "🍩",
+    pusto: '<div>🍔</div>Корзина пуста.<br>Порадуйте себя чем-нибудь вкусным.'
+  },
+  "21": {
+    kroshki: "Главная · Режим 21+ · <b>Каталог</b>",
+    poisk: "Искать — пиво, вино, закуски, сигареты…",
+    eko: "Премиум",
+    podval: "Режим 21+. Алкоголь, табак и закуски под спиртное. Пожалуйста, знайте меру.",
+    slogan: "⚠️ Чрезмерное употребление алкоголя вредит здоровью. Курение убивает.",
+    zagolovok: "Всё 21+",
+    nichego: "🫗",
+    pusto: '<div>🥃</div>Корзина пуста.<br>Выберите что-нибудь к вечеру.'
+  }
+};
+
+// =====================================================
+//  СОСТОЯНИЕ (что сейчас выбрано)
+// =====================================================
+var rezhim = "poleznoe";          // текущий режим
+var vybranayaKategoriya = "vse";  // выбранная категория ("vse" = все)
+var tekstPoiska = "";
+var maxCena = 0;                  // ползунок цены
+var tolkoSkidka = false;          // галочки
+var tolkoKz = false;
+var tolkoEko = false;
+var vybranayaStrana = "";         // "" = все страны
+var sortirovka = "obychno";
+var korzina = {};                 // { id товара: количество }
+var vozrastProveren = false;
+
+// короткая запись для document.getElementById
+function $(id) {
+  return document.getElementById(id);
+}
+
+// =====================================================
+//  ДАННЫЕ: КАТЕГОРИИ И ТОВАРЫ
+//  vazhno: true  — кнопка категории с рамкой
+//  ramka: true   — раздел в каталоге в рамке
+//  opisanie      — текст под заголовком раздела
+// =====================================================
+// --- категории каждого режима ---
+// режим «Полезное»
+var kategoriiPoleznoe = [
+  { id: "vse", nazvanie: "Все товары" },
+  { id: "ovoshi", nazvanie: "Овощи" },
+  { id: "frukty", nazvanie: "Фрукты" },
+  { id: "ekzotika", nazvanie: "🐉 Экзотика", vazhno: true, opisanie: "Драгонфрут, маракуйя, манго и другие фрукты и овощи из тропиков" },
+  { id: "yagody", nazvanie: "Ягоды" },
+  { id: "zelen", nazvanie: "Зелень" },
+  { id: "salaty", nazvanie: "🥗 Салаты", vazhno: true, ramka: true, opisanie: "Готовые салаты из свежих овощей — собираем в день доставки" },
+  { id: "perekusy", nazvanie: "🥜 Полезные закуски", vazhno: true, ramka: true, opisanie: "Перекусы без лишнего сахара: орехи, хумус, хлебцы, батончики" },
+  { id: "molochka", nazvanie: "Йогурты и молочное" },
+  { id: "ryba", nazvanie: "🐟 Рыба" },
+  { id: "hleb", nazvanie: "Хлеб и крупы" },
+  { id: "napitki", nazvanie: "Напитки" }
+];
+
+// режим «Вредное»
+var kategoriiVrednoe = [
+  { id: "vse", nazvanie: "Все товары" },
+  { id: "fastfud", nazvanie: "🍔 Фастфуд" },
+  { id: "sladkoe", nazvanie: "🍫 Сладкое" },
+  { id: "deserty", nazvanie: "🍰 Десерты", vazhno: true, ramka: true, opisanie: "Торты, чизкейки, пончики и мороженое — иногда можно" },
+  { id: "sneki", nazvanie: "🍿 Снеки" },
+  { id: "gazirovka", nazvanie: "⚡ Газировка и энергетики" }
+];
+
+// режим 21+
+var kategorii21Rezhim = [
+  { id: "vse", nazvanie: "Все товары" },
+  { id: "pivo", nazvanie: "🍺 Пиво и сидр" },
+  { id: "vino", nazvanie: "🍷 Вино" },
+  { id: "krepkoe", nazvanie: "🥃 Крепкое" },
+  { id: "zakuski", nazvanie: "🍤 Закуски под спиртное", vazhno: true, ramka: true, opisanie: "Всё к пиву, вину и крепкому: морепродукты, мясные нарезки, сыры и соленья" },
+  { id: "sigarety", nazvanie: "🚬 Сигареты" },
+  { id: "kalyan", nazvanie: "💨 Кальян и стики" }
+];
+
+// на товарах из этих категорий показываем значок 21+
+var kategorii21 = ["pivo", "vino", "krepkoe", "sigarety", "kalyan"];
+
+// --- товары ---
+// kartinka — эмодзи, fon — цвет квадрата под ним, kz — из Казахстана, eko — эко/фермерское
+// режим «Полезное»
+var poleznyeTovary = [
+  // овощи
+  { id: 1, kategoriya: "ovoshi", nazvanie: "Огурцы Green Land Миринда", kartinka: "🥒", fon: "#e8f6e0", cena: 520, edinica: "кг", reiting: 4.5, strana: "Казахстан", kz: true },
+  { id: 2, kategoriya: "ovoshi", nazvanie: "Помидоры черри красные", kartinka: "🍅", fon: "#fde3e0", cena: 925, staraya_cena: 1150, edinica: "0.5 кг", reiting: 4.7, strana: "Нидерланды" },
+  { id: 3, kategoriya: "ovoshi", nazvanie: "Капуста брокколи", kartinka: "🥦", fon: "#e3f2e0", cena: 804, edinica: "кг", reiting: 4.6, strana: "Китай" },
+  { id: 4, kategoriya: "ovoshi", nazvanie: "Морковь мытая", kartinka: "🥕", fon: "#ffeede", cena: 206, edinica: "кг", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 5, kategoriya: "ovoshi", nazvanie: "Помидоры сладкие Ташкент", kartinka: "🍅", fon: "#fde3e0", cena: 1321, edinica: "0.7 кг", reiting: 4.5, strana: "Узбекистан" },
+  { id: 6, kategoriya: "ovoshi", nazvanie: "Картофель молодой", kartinka: "🥔", fon: "#f6efd8", cena: 189, edinica: "кг", reiting: 4.4, strana: "Казахстан", kz: true, eko: true },
+  { id: 7, kategoriya: "ovoshi", nazvanie: "Баклажаны фиолетовые", kartinka: "🍆", fon: "#efe3f5", cena: 640, edinica: "кг", reiting: 4.3, strana: "Узбекистан" },
+  { id: 8, kategoriya: "ovoshi", nazvanie: "Чеснок фермерский", kartinka: "🧄", fon: "#f3f0ea", cena: 1490, staraya_cena: 1790, edinica: "0.3 кг", reiting: 4.8, strana: "Казахстан", kz: true, eko: true },
+  { id: 9, kategoriya: "ovoshi", nazvanie: "Перец болгарский красный", kartinka: "🫑", fon: "#fde3e0", cena: 1120, edinica: "кг", reiting: 4.6, strana: "Нидерланды" },
+  { id: 10, kategoriya: "ovoshi", nazvanie: "Кукуруза сахарная", kartinka: "🌽", fon: "#fff3d1", cena: 290, edinica: "шт", reiting: 4.5, strana: "Казахстан", kz: true },
+  // фрукты
+  { id: 11, kategoriya: "frukty", nazvanie: "Бананы Эквадор", kartinka: "🍌", fon: "#fff6cf", cena: 690, edinica: "кг", reiting: 4.6, strana: "Эквадор" },
+  { id: 12, kategoriya: "frukty", nazvanie: "Яблоки Гала", kartinka: "🍎", fon: "#fde0dd", cena: 750, staraya_cena: 990, edinica: "кг", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 13, kategoriya: "frukty", nazvanie: "Апельсины сочные", kartinka: "🍊", fon: "#ffe9cf", cena: 890, edinica: "кг", reiting: 4.6, strana: "Египет" },
+  { id: 14, kategoriya: "frukty", nazvanie: "Виноград кишмиш", kartinka: "🍇", fon: "#ece0f5", cena: 1490, edinica: "кг", reiting: 4.8, strana: "Узбекистан", eko: true },
+  { id: 15, kategoriya: "frukty", nazvanie: "Лимоны", kartinka: "🍋", fon: "#fbf3c8", cena: 1120, edinica: "кг", reiting: 4.4, strana: "Турция" },
+  { id: 16, kategoriya: "frukty", nazvanie: "Груша Конференция", kartinka: "🍐", fon: "#eef4d6", cena: 990, edinica: "кг", reiting: 4.5, strana: "Нидерланды" },
+  { id: 17, kategoriya: "frukty", nazvanie: "Арбуз астраханский", kartinka: "🍉", fon: "#e3f3df", cena: 210, edinica: "кг", reiting: 4.9, strana: "Казахстан", kz: true },
+  // экзотика
+  { id: 31, kategoriya: "ekzotika", nazvanie: "Драгонфрут (питахайя) красный", kartinka: "🐉", fon: "#fde0ef", cena: 1890, edinica: "шт", reiting: 4.7, strana: "Вьетнам" },
+  { id: 32, kategoriya: "ekzotika", nazvanie: "Маракуйя фиолетовая", kartinka: "🟣", fon: "#ece0f5", cena: 2490, staraya_cena: 2890, edinica: "0.5 кг", reiting: 4.8, strana: "Вьетнам" },
+  { id: 33, kategoriya: "ekzotika", nazvanie: "Манго спелое", kartinka: "🥭", fon: "#fff0cf", cena: 1290, edinica: "шт", reiting: 4.8, strana: "Таиланд" },
+  { id: 34, kategoriya: "ekzotika", nazvanie: "Ананас золотой", kartinka: "🍍", fon: "#fff4cc", cena: 1690, edinica: "шт", reiting: 4.6, strana: "Коста-Рика" },
+  { id: 35, kategoriya: "ekzotika", nazvanie: "Кокос молодой питьевой", kartinka: "🥥", fon: "#f1ebe3", cena: 990, edinica: "шт", reiting: 4.4, strana: "Таиланд" },
+  { id: 36, kategoriya: "ekzotika", nazvanie: "Авокадо Хасс", kartinka: "🥑", fon: "#e6f2dc", cena: 690, edinica: "шт", reiting: 4.6, strana: "Перу" },
+  { id: 37, kategoriya: "ekzotika", nazvanie: "Карамбола", kartinka: "⭐", fon: "#fff6c8", cena: 890, edinica: "шт", reiting: 4.5, strana: "Таиланд" },
+  { id: 38, kategoriya: "ekzotika", nazvanie: "Киви Голд", kartinka: "🥝", fon: "#eef6d6", cena: 1390, edinica: "0.5 кг", reiting: 4.7, strana: "Новая Зеландия" },
+  { id: 39, kategoriya: "ekzotika", nazvanie: "Батат (сладкий картофель)", kartinka: "🍠", fon: "#fbe5d6", cena: 790, edinica: "кг", reiting: 4.5, strana: "Египет" },
+  { id: 40, kategoriya: "ekzotika", nazvanie: "Имбирь свежий", kartinka: "🫚", fon: "#f6ecd6", cena: 590, edinica: "0.2 кг", reiting: 4.4, strana: "Китай" },
+  { id: 41, kategoriya: "ekzotika", nazvanie: "Эдамаме в стручках", kartinka: "🫛", fon: "#e5f3dc", cena: 1490, edinica: "0.4 кг", reiting: 4.5, strana: "Китай" },
+  // ягоды
+  { id: 18, kategoriya: "yagody", nazvanie: "Клубника свежая", kartinka: "🍓", fon: "#fde0e2", cena: 2490, staraya_cena: 2990, edinica: "0.5 кг", reiting: 4.7, strana: "Казахстан", kz: true, eko: true },
+  { id: 19, kategoriya: "yagody", nazvanie: "Голубика садовая", kartinka: "🫐", fon: "#e3e6f7", cena: 2890, edinica: "0.25 кг", reiting: 4.6, strana: "Перу" },
+  // зелень
+  { id: 20, kategoriya: "zelen", nazvanie: "Укроп свежий пучок", kartinka: "🌿", fon: "#e6f4e0", cena: 190, edinica: "пучок", reiting: 4.5, strana: "Казахстан", kz: true, eko: true },
+  { id: 21, kategoriya: "zelen", nazvanie: "Петрушка кудрявая", kartinka: "🌱", fon: "#e6f4e0", cena: 190, edinica: "пучок", reiting: 4.4, strana: "Казахстан", kz: true, eko: true },
+  { id: 22, kategoriya: "zelen", nazvanie: "Салат Айсберг", kartinka: "🥬", fon: "#e8f6df", cena: 560, edinica: "шт", reiting: 4.3, strana: "Нидерланды" },
+  // салаты
+  { id: 51, kategoriya: "salaty", nazvanie: "Салат Греческий с фетой", kartinka: "🥗", fon: "#e6f4e0", cena: 1690, edinica: "250 г", reiting: 4.8, strana: "Казахстан", kz: true },
+  { id: 52, kategoriya: "salaty", nazvanie: "Цезарь с курицей гриль", kartinka: "🥗", fon: "#f3efd9", cena: 1890, edinica: "250 г", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 53, kategoriya: "salaty", nazvanie: "Витаминный: капуста, морковь, яблоко", kartinka: "🥬", fon: "#e8f6df", cena: 890, edinica: "250 г", reiting: 4.5, strana: "Казахстан", kz: true, eko: true },
+  { id: 54, kategoriya: "salaty", nazvanie: "Киноа с авокадо и шпинатом", kartinka: "🥑", fon: "#e1f1dc", cena: 2190, staraya_cena: 2490, edinica: "250 г", reiting: 4.9, strana: "Казахстан", kz: true },
+  { id: 55, kategoriya: "salaty", nazvanie: "С тунцом, фасолью и яйцом", kartinka: "🐟", fon: "#e3eef7", cena: 2090, edinica: "250 г", reiting: 4.6, strana: "Казахстан", kz: true },
+  { id: 56, kategoriya: "salaty", nazvanie: "Фруктовый с драгонфрутом и манго", kartinka: "🥭", fon: "#fde0ef", cena: 1790, edinica: "300 г", reiting: 4.8, strana: "Казахстан", kz: true },
+  { id: 57, kategoriya: "salaty", nazvanie: "Свекла с грецким орехом", kartinka: "🥗", fon: "#f7dfe6", cena: 790, edinica: "250 г", reiting: 4.5, strana: "Казахстан", kz: true, eko: true },
+  { id: 58, kategoriya: "salaty", nazvanie: "Капрезе с моцареллой и базиликом", kartinka: "🍅", fon: "#fde3e0", cena: 1590, edinica: "200 г", reiting: 4.7, strana: "Казахстан", kz: true },
+  // полезные закуски
+  { id: 61, kategoriya: "perekusy", nazvanie: "Микс орехов несолёных", kartinka: "🥜", fon: "#f3e8d6", cena: 1890, edinica: "200 г", reiting: 4.8, strana: "Узбекистан" },
+  { id: 62, kategoriya: "perekusy", nazvanie: "Хумус классический", kartinka: "🫘", fon: "#f5ecd9", cena: 890, edinica: "200 г", reiting: 4.6, strana: "Казахстан", kz: true },
+  { id: 63, kategoriya: "perekusy", nazvanie: "Овощные палочки с йогуртовым соусом", kartinka: "🥕", fon: "#ffeede", cena: 990, edinica: "200 г", reiting: 4.5, strana: "Казахстан", kz: true, eko: true },
+  { id: 64, kategoriya: "perekusy", nazvanie: "Хлебцы цельнозерновые", kartinka: "🍘", fon: "#f3e6d3", cena: 490, edinica: "100 г", reiting: 4.4, strana: "Казахстан", kz: true },
+  { id: 65, kategoriya: "perekusy", nazvanie: "Батончик финики-орехи без сахара", kartinka: "🍫", fon: "#efe2d6", cena: 390, staraya_cena: 490, edinica: "шт", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 66, kategoriya: "perekusy", nazvanie: "Чипсы яблочные без сахара", kartinka: "🍏", fon: "#eef6d6", cena: 690, edinica: "50 г", reiting: 4.5, strana: "Казахстан", kz: true, eko: true },
+  { id: 67, kategoriya: "perekusy", nazvanie: "Чиа-пудинг на кокосовом молоке", kartinka: "🍮", fon: "#f1ebe3", cena: 890, edinica: "150 г", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 68, kategoriya: "perekusy", nazvanie: "Финики Меджул", kartinka: "🌴", fon: "#f3e3cf", cena: 2290, edinica: "500 г", reiting: 4.9, strana: "Иордания" },
+  // йогурты и молочное
+  { id: 42, kategoriya: "molochka", nazvanie: "Йогурт греческий натуральный 2%", kartinka: "🥣", fon: "#f0f2f7", cena: 590, edinica: "200 г", reiting: 4.8, strana: "Казахстан", kz: true },
+  { id: 43, kategoriya: "molochka", nazvanie: "Йогурт питьевой черничный", kartinka: "🫐", fon: "#e8e6f7", cena: 420, edinica: "0.3 л", reiting: 4.6, strana: "Казахстан", kz: true },
+  { id: 46, kategoriya: "molochka", nazvanie: "Йогурт манго-маракуйя", kartinka: "🥭", fon: "#fff0cf", cena: 490, edinica: "150 г", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 47, kategoriya: "molochka", nazvanie: "Скир без добавок", kartinka: "🥣", fon: "#eef1f7", cena: 690, edinica: "140 г", reiting: 4.6, strana: "Казахстан", kz: true },
+  { id: 44, kategoriya: "molochka", nazvanie: "Кефир 1%", kartinka: "🥛", fon: "#eef2f7", cena: 390, edinica: "1 л", reiting: 4.7, strana: "Казахстан", kz: true, eko: true },
+  { id: 45, kategoriya: "molochka", nazvanie: "Творог фермерский 5%", kartinka: "🥣", fon: "#f5f1e6", cena: 790, staraya_cena: 950, edinica: "300 г", reiting: 4.8, strana: "Казахстан", kz: true, eko: true },
+  { id: 23, kategoriya: "molochka", nazvanie: "Молоко фермерское 3.2%", kartinka: "🥛", fon: "#f0f2f7", cena: 520, edinica: "1 л", reiting: 4.8, strana: "Казахстан", kz: true, eko: true },
+  { id: 24, kategoriya: "molochka", nazvanie: "Сыр моцарелла", kartinka: "🧀", fon: "#fdf3d6", cena: 1890, staraya_cena: 2290, edinica: "0.3 кг", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 25, kategoriya: "molochka", nazvanie: "Яйцо куриное С0", kartinka: "🥚", fon: "#f5f1e6", cena: 990, edinica: "10 шт", reiting: 4.6, strana: "Казахстан", kz: true },
+  // рыба
+  { id: 72, kategoriya: "ryba", nazvanie: "Лосось охлаждённый, филе", kartinka: "🐟", fon: "#fde6dc", cena: 7490, staraya_cena: 8290, edinica: "0.5 кг", reiting: 4.8, strana: "Норвегия" },
+  { id: 73, kategoriya: "ryba", nazvanie: "Судак балхашский, филе", kartinka: "🐠", fon: "#e3eef7", cena: 3290, edinica: "0.5 кг", reiting: 4.6, strana: "Казахстан", kz: true, eko: true },
+  { id: 74, kategoriya: "ryba", nazvanie: "Скумбрия свежемороженая", kartinka: "🐟", fon: "#e6ecf3", cena: 1590, edinica: "шт", reiting: 4.5, strana: "Норвегия" },
+  { id: 75, kategoriya: "ryba", nazvanie: "Мидии в раковинах", kartinka: "🦪", fon: "#eef1f7", cena: 2490, edinica: "0.5 кг", reiting: 4.4, strana: "Чили" },
+  // хлеб и крупы
+  { id: 26, kategoriya: "hleb", nazvanie: "Хлеб бородинский", kartinka: "🍞", fon: "#f3e6d3", cena: 340, edinica: "шт", reiting: 4.5, strana: "Казахстан", kz: true },
+  { id: 27, kategoriya: "hleb", nazvanie: "Хлеб цельнозерновой с семенами", kartinka: "🍞", fon: "#f6ecd6", cena: 460, edinica: "шт", reiting: 4.6, strana: "Казахстан", kz: true },
+  { id: 28, kategoriya: "hleb", nazvanie: "Хлопья овсяные", kartinka: "🌾", fon: "#fbeecd", cena: 450, edinica: "500 г", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 48, kategoriya: "hleb", nazvanie: "Киноа белая", kartinka: "🍚", fon: "#f3efe6", cena: 1390, edinica: "400 г", reiting: 4.6, strana: "Перу" },
+  // напитки
+  { id: 29, kategoriya: "napitki", nazvanie: "Сок апельсиновый прямого отжима", kartinka: "🧃", fon: "#ffe9cf", cena: 790, edinica: "1 л", reiting: 4.4, strana: "Казахстан", kz: true },
+  { id: 30, kategoriya: "napitki", nazvanie: "Вода Тассай негаз. 1.5 л", kartinka: "💧", fon: "#e3eef7", cena: 220, edinica: "шт", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 69, kategoriya: "napitki", nazvanie: "Смузи зелёный: шпинат-яблоко", kartinka: "🥤", fon: "#e3f2e0", cena: 790, edinica: "0.3 л", reiting: 4.6, strana: "Казахстан", kz: true, eko: true },
+  { id: 70, kategoriya: "napitki", nazvanie: "Комбуча имбирная", kartinka: "🫖", fon: "#fbeecd", cena: 690, edinica: "0.33 л", reiting: 4.5, strana: "Казахстан", kz: true },
+  { id: 71, kategoriya: "napitki", nazvanie: "Кокосовая вода", kartinka: "🥥", fon: "#eef2e6", cena: 890, edinica: "0.33 л", reiting: 4.5, strana: "Таиланд" }
+];
+
+// режим 21+ (eko здесь значит «премиум»)
+var tovary21 = [
+  // пиво
+  { id: 101, kategoriya: "pivo", nazvanie: "Пиво светлое нефильтрованное", kartinka: "🍺", fon: "#2b2410", cena: 690, edinica: "0.5 л · 4.9%", reiting: 4.5, strana: "Германия" },
+  { id: 102, kategoriya: "pivo", nazvanie: "Пиво тёмное", kartinka: "🍺", fon: "#24170d", cena: 790, edinica: "0.5 л · 5.5%", reiting: 4.6, strana: "Чехия" },
+  { id: 103, kategoriya: "pivo", nazvanie: "Сидр яблочный полусухой", kartinka: "🍻", fon: "#1f2512", cena: 650, edinica: "0.5 л · 5%", reiting: 4.4, strana: "Казахстан", kz: true },
+  { id: 104, kategoriya: "pivo", nazvanie: "Пиво крафтовое IPA", kartinka: "🍻", fon: "#2b1f0f", cena: 1190, staraya_cena: 1390, edinica: "0.45 л · 6.5%", reiting: 4.7, strana: "Казахстан", kz: true, eko: true },
+  // вино
+  { id: 111, kategoriya: "vino", nazvanie: "Вино красное сухое Саперави", kartinka: "🍷", fon: "#2a0f14", cena: 4290, edinica: "0.75 л · 13%", reiting: 4.7, strana: "Грузия" },
+  { id: 112, kategoriya: "vino", nazvanie: "Вино белое полусладкое", kartinka: "🥂", fon: "#26240f", cena: 3490, staraya_cena: 3990, edinica: "0.75 л · 11.5%", reiting: 4.5, strana: "Италия" },
+  { id: 113, kategoriya: "vino", nazvanie: "Игристое вино брют", kartinka: "🍾", fon: "#22210f", cena: 5290, edinica: "0.75 л · 11%", reiting: 4.6, strana: "Италия", eko: true },
+  { id: 114, kategoriya: "vino", nazvanie: "Вино розовое сухое", kartinka: "🍷", fon: "#2b1219", cena: 3890, edinica: "0.75 л · 12%", reiting: 4.4, strana: "Франция" },
+  // крепкое
+  { id: 121, kategoriya: "krepkoe", nazvanie: "Водка классическая", kartinka: "🍸", fon: "#16202a", cena: 3290, edinica: "0.5 л · 40%", reiting: 4.3, strana: "Казахстан", kz: true },
+  { id: 122, kategoriya: "krepkoe", nazvanie: "Виски шотландский купажированный", kartinka: "🥃", fon: "#2a1a0c", cena: 12990, staraya_cena: 14990, edinica: "0.7 л · 40%", reiting: 4.7, strana: "Шотландия", eko: true },
+  { id: 123, kategoriya: "krepkoe", nazvanie: "Коньяк 5 лет выдержки", kartinka: "🥃", fon: "#2a160c", cena: 8490, edinica: "0.5 л · 40%", reiting: 4.8, strana: "Армения", eko: true },
+  { id: 124, kategoriya: "krepkoe", nazvanie: "Ром тёмный", kartinka: "🥃", fon: "#24130a", cena: 9290, edinica: "0.7 л · 40%", reiting: 4.5, strana: "Доминикана" },
+  { id: 125, kategoriya: "krepkoe", nazvanie: "Джин лондонский сухой", kartinka: "🍸", fon: "#10202a", cena: 10490, edinica: "0.7 л · 40%", reiting: 4.6, strana: "Великобритания" },
+  { id: 126, kategoriya: "krepkoe", nazvanie: "Текила серебряная", kartinka: "🥃", fon: "#1f2410", cena: 11990, edinica: "0.7 л · 38%", reiting: 4.5, strana: "Мексика" },
+  // закуски под спиртное
+  { id: 151, kategoriya: "zakuski", nazvanie: "Креветки королевские варёно-мороженые", kartinka: "🍤", fon: "#2a1510", cena: 4990, staraya_cena: 5890, edinica: "0.5 кг", reiting: 4.7, strana: "Вьетнам" },
+  { id: 152, kategoriya: "zakuski", nazvanie: "Вобла вяленая", kartinka: "🐟", fon: "#1f1d14", cena: 890, edinica: "шт", reiting: 4.6, strana: "Казахстан", kz: true },
+  { id: 156, kategoriya: "zakuski", nazvanie: "Казы конина, нарезка", kartinka: "🥓", fon: "#2a1212", cena: 2890, edinica: "100 г", reiting: 4.8, strana: "Казахстан", kz: true, eko: true },
+  { id: 154, kategoriya: "zakuski", nazvanie: "Сырная тарелка ассорти", kartinka: "🧀", fon: "#2a2410", cena: 3790, edinica: "300 г", reiting: 4.8, strana: "Казахстан", kz: true, eko: true },
+  { id: 155, kategoriya: "zakuski", nazvanie: "Куриные крылышки BBQ", kartinka: "🍗", fon: "#2a170c", cena: 2490, edinica: "500 г", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 160, kategoriya: "zakuski", nazvanie: "Кальмар сушёный стружка", kartinka: "🦑", fon: "#1f1a24", cena: 1490, edinica: "100 г", reiting: 4.5, strana: "Китай" },
+  { id: 153, kategoriya: "zakuski", nazvanie: "Арахис солёный жареный", kartinka: "🥜", fon: "#2a1f10", cena: 390, edinica: "150 г", reiting: 4.4, strana: "Казахстан", kz: true },
+  { id: 157, kategoriya: "zakuski", nazvanie: "Оливки с косточкой", kartinka: "🫒", fon: "#1c2010", cena: 1290, edinica: "300 г", reiting: 4.5, strana: "Испания" },
+  { id: 161, kategoriya: "zakuski", nazvanie: "Огурчики солёные хрустящие", kartinka: "🥒", fon: "#142412", cena: 990, edinica: "0.7 кг", reiting: 4.6, strana: "Казахстан", kz: true },
+  { id: 158, kategoriya: "zakuski", nazvanie: "Сухарики ржаные с чесноком", kartinka: "🍞", fon: "#2a2010", cena: 290, edinica: "100 г", reiting: 4.2, strana: "Казахстан", kz: true },
+  { id: 159, kategoriya: "zakuski", nazvanie: "Чипсы картофельные с беконом", kartinka: "🥔", fon: "#2a2412", cena: 790, edinica: "150 г", reiting: 4.3, strana: "Казахстан", kz: true },
+  { id: 162, kategoriya: "zakuski", nazvanie: "Претцели солёные", kartinka: "🥨", fon: "#2a1f10", cena: 590, edinica: "200 г", reiting: 4.4, strana: "Германия" },
+  // сигареты
+  { id: 131, kategoriya: "sigarety", nazvanie: "Сигареты классические красные", kartinka: "🚬", fon: "#231515", cena: 1100, edinica: "пачка 20 шт", reiting: 4.1, strana: "Казахстан", kz: true },
+  { id: 132, kategoriya: "sigarety", nazvanie: "Сигареты лёгкие синие", kartinka: "🚬", fon: "#151a26", cena: 1150, edinica: "пачка 20 шт", reiting: 4.0, strana: "Казахстан", kz: true },
+  { id: 133, kategoriya: "sigarety", nazvanie: "Сигариллы вишнёвые", kartinka: "🚬", fon: "#26131a", cena: 2490, edinica: "10 шт", reiting: 4.3, strana: "Нидерланды", eko: true },
+  { id: 134, kategoriya: "sigarety", nazvanie: "Сигара кубинская", kartinka: "🚬", fon: "#2a170c", cena: 6990, edinica: "шт", reiting: 4.8, strana: "Куба", eko: true },
+  // кальян
+  { id: 141, kategoriya: "kalyan", nazvanie: "Табак для кальяна «Мята»", kartinka: "💨", fon: "#102420", cena: 3490, edinica: "100 г", reiting: 4.5, strana: "Германия" },
+  { id: 142, kategoriya: "kalyan", nazvanie: "Стики для нагревания табака", kartinka: "💨", fon: "#1c1c24", cena: 1290, edinica: "пачка 20 шт", reiting: 4.2, strana: "Казахстан", kz: true },
+  { id: 143, kategoriya: "kalyan", nazvanie: "Электронная сигарета одноразовая", kartinka: "💨", fon: "#1a1426", cena: 3990, staraya_cena: 4490, edinica: "шт", reiting: 4.0, strana: "Китай" },
+  { id: 144, kategoriya: "kalyan", nazvanie: "Уголь для кальяна кокосовый", kartinka: "🔥", fon: "#2a170c", cena: 2290, edinica: "1 кг", reiting: 4.6, strana: "Индонезия" },
+];
+
+// режим «Вредное» (eko здесь значит «хит»)
+var vrednyeTovary = [
+  // фастфуд
+  { id: 171, kategoriya: "fastfud", nazvanie: "Бургер двойной с беконом", kartinka: "🍔", fon: "#fdebd6", cena: 1690, edinica: "шт", reiting: 4.5, strana: "Казахстан", kz: true, eko: true },
+  { id: 172, kategoriya: "fastfud", nazvanie: "Картофель фри", kartinka: "🍟", fon: "#fff3cc", cena: 890, edinica: "200 г", reiting: 4.4, strana: "Казахстан", kz: true },
+  { id: 173, kategoriya: "fastfud", nazvanie: "Пицца пепперони 30 см", kartinka: "🍕", fon: "#fde3dc", cena: 3990, staraya_cena: 4590, edinica: "шт", reiting: 4.7, strana: "Казахстан", kz: true, eko: true },
+  { id: 177, kategoriya: "fastfud", nazvanie: "Хот-дог с горчицей", kartinka: "🌭", fon: "#fde9d6", cena: 990, edinica: "шт", reiting: 4.3, strana: "Казахстан", kz: true },
+  { id: 178, kategoriya: "fastfud", nazvanie: "Шаурма с курицей", kartinka: "🌯", fon: "#f6ead8", cena: 1490, edinica: "шт", reiting: 4.8, strana: "Казахстан", kz: true, eko: true },
+  { id: 179, kategoriya: "fastfud", nazvanie: "Наггетсы куриные", kartinka: "🍗", fon: "#fff0d6", cena: 1290, staraya_cena: 1490, edinica: "9 шт", reiting: 4.5, strana: "Казахстан", kz: true },
+  // сладкое
+  { id: 174, kategoriya: "sladkoe", nazvanie: "Шоколадный батончик с карамелью", kartinka: "🍫", fon: "#f1e3d6", cena: 390, edinica: "шт", reiting: 4.6, strana: "Россия" },
+  { id: 176, kategoriya: "sladkoe", nazvanie: "Мармелад кислый", kartinka: "🍬", fon: "#fde0ef", cena: 590, edinica: "200 г", reiting: 4.3, strana: "Германия" },
+  { id: 191, kategoriya: "sladkoe", nazvanie: "Шоколад молочный «Казахстанский»", kartinka: "🍫", fon: "#efe2d6", cena: 690, edinica: "100 г", reiting: 4.9, strana: "Казахстан", kz: true, eko: true },
+  { id: 192, kategoriya: "sladkoe", nazvanie: "Конфеты ассорти в коробке", kartinka: "🍬", fon: "#f7e1e6", cena: 2490, staraya_cena: 2890, edinica: "250 г", reiting: 4.6, strana: "Казахстан", kz: true },
+  { id: 193, kategoriya: "sladkoe", nazvanie: "Леденец на палочке", kartinka: "🍭", fon: "#fde0f0", cena: 190, edinica: "шт", reiting: 4.2, strana: "Испания" },
+  { id: 194, kategoriya: "sladkoe", nazvanie: "Печенье с кусочками шоколада", kartinka: "🍪", fon: "#f3e6d3", cena: 790, edinica: "200 г", reiting: 4.7, strana: "Казахстан", kz: true },
+  // десерты
+  { id: 175, kategoriya: "deserty", nazvanie: "Пончик глазированный", kartinka: "🍩", fon: "#fde0ea", cena: 450, edinica: "шт", reiting: 4.5, strana: "Казахстан", kz: true },
+  { id: 201, kategoriya: "deserty", nazvanie: "Чизкейк Нью-Йорк", kartinka: "🍰", fon: "#fff1d6", cena: 1290, edinica: "кусок", reiting: 4.8, strana: "Казахстан", kz: true, eko: true },
+  { id: 202, kategoriya: "deserty", nazvanie: "Торт шоколадный «Прага»", kartinka: "🎂", fon: "#efe2d6", cena: 5990, staraya_cena: 6890, edinica: "1 кг", reiting: 4.7, strana: "Казахстан", kz: true },
+  { id: 203, kategoriya: "deserty", nazvanie: "Мороженое пломбир", kartinka: "🍨", fon: "#eef2f7", cena: 490, edinica: "80 г", reiting: 4.8, strana: "Казахстан", kz: true, eko: true },
+  { id: 204, kategoriya: "deserty", nazvanie: "Капкейк с кремом", kartinka: "🧁", fon: "#fde0ef", cena: 590, edinica: "шт", reiting: 4.4, strana: "Казахстан", kz: true },
+  { id: 205, kategoriya: "deserty", nazvanie: "Крем-брюле", kartinka: "🍮", fon: "#fff0cf", cena: 890, edinica: "120 г", reiting: 4.6, strana: "Франция" },
+  // снеки
+  { id: 211, kategoriya: "sneki", nazvanie: "Попкорн карамельный", kartinka: "🍿", fon: "#fff3cc", cena: 590, edinica: "100 г", reiting: 4.5, strana: "Казахстан", kz: true },
+  { id: 212, kategoriya: "sneki", nazvanie: "Чипсы со вкусом паприки", kartinka: "🥔", fon: "#fde9d6", cena: 690, edinica: "150 г", reiting: 4.4, strana: "Казахстан", kz: true },
+  { id: 213, kategoriya: "sneki", nazvanie: "Начос с сырным соусом", kartinka: "🌮", fon: "#fff0cf", cena: 1190, edinica: "200 г", reiting: 4.6, strana: "Мексика", eko: true },
+  // газировка
+  { id: 181, kategoriya: "gazirovka", nazvanie: "Энергетик классический", kartinka: "⚡", fon: "#f0f6d6", cena: 590, edinica: "0.45 л", reiting: 4.3, strana: "Казахстан", kz: true },
+  { id: 183, kategoriya: "gazirovka", nazvanie: "Энергетик без сахара", kartinka: "⚡", fon: "#e0eef6", cena: 620, edinica: "0.45 л", reiting: 4.2, strana: "Казахстан", kz: true },
+  { id: 182, kategoriya: "gazirovka", nazvanie: "Газировка кола", kartinka: "🥤", fon: "#fde3e0", cena: 450, edinica: "1 л", reiting: 4.5, strana: "Казахстан", kz: true, eko: true },
+  { id: 184, kategoriya: "gazirovka", nazvanie: "Лимонад «Тархун»", kartinka: "🥤", fon: "#e3f3df", cena: 390, edinica: "0.5 л", reiting: 4.4, strana: "Казахстан", kz: true }
+];
+
+// все товары одним списком — нужен, чтобы найти товар по id из любого режима
+var vseTovary = poleznyeTovary.concat(vrednyeTovary, tovary21);
+
+
+// =====================================================
+//  ПОМОЩНИКИ
+// =====================================================
+
+// найти товар по id
+function naitiTovar(id) {
+  for (var i = 0; i < vseTovary.length; i++) {
+    if (vseTovary[i].id == id) return vseTovary[i];
+  }
+  return null;
+}
+
+// 8000 → «8 000 ₸»
+function krasivayaCena(chislo) {
+  return chislo.toLocaleString("ru-RU") + " ₸";
+}
+
+// товары текущего режима
+function tovaryRezhima() {
+  if (rezhim == "poleznoe") return poleznyeTovary;
+  if (rezhim == "vrednoe") return vrednyeTovary;
+  return tovary21;
+}
+
+// категории текущего режима
+function kategoriiRezhima() {
+  if (rezhim == "poleznoe") return kategoriiPoleznoe;
+  if (rezhim == "vrednoe") return kategoriiVrednoe;
+  return kategorii21Rezhim;
+}
+
+// нужен ли товару значок 21+ (алкоголь, табак)
+function nuzhen21(kategoriya) {
+  return kategorii21.indexOf(kategoriya) != -1;
+}
+
+
+// =====================================================
+//  ПЕРЕКЛЮЧЕНИЕ РЕЖИМА
+// =====================================================
+
+function pereklyuchitRezhim(novyiRezhim) {
+  rezhim = novyiRezhim;
+  postavitKruzhok(REZHIMY.indexOf(rezhim));
+
+  // меняем тексты на странице
+  var t = TEKSTY[rezhim];
+  $("kroshki").innerHTML = t.kroshki;
+  $("poisk").placeholder = t.poisk;
+  $("slovo-eko").innerHTML = t.eko;
+  $("podval-tekst").innerHTML = t.podval;
+  $("podval-slogan").innerHTML = t.slogan;
+  $("vnimanie").style.display = (rezhim == "21") ? "block" : "none";
+
+  // сбрасываем все фильтры
+  vybranayaKategoriya = "vse";
+  tekstPoiska = "";
+  tolkoSkidka = false;
+  tolkoKz = false;
+  tolkoEko = false;
+  vybranayaStrana = "";
+  sortirovka = "obychno";
+  $("poisk").value = "";
+  $("galka-skidka").checked = false;
+  $("galka-kz").checked = false;
+  $("galka-eko").checked = false;
+  $("sortirovka").value = "obychno";
+
+  // ищем самую низкую и самую высокую цену для ползунка
+  var tovary = tovaryRezhima();
+  var min = tovary[0].cena;
+  var max = tovary[0].cena;
+  for (var i = 0; i < tovary.length; i++) {
+    if (tovary[i].cena < min) min = tovary[i].cena;
+    if (tovary[i].cena > max) max = tovary[i].cena;
+  }
+  max = Math.ceil(max / 100) * 100; // округляем вверх до сотен
+  maxCena = max;
+  $("polzunok").min = min;
+  $("polzunok").max = max;
+  $("polzunok").value = max;
+  $("minCena").innerHTML = krasivayaCena(min);
+  $("maxCena").innerHTML = krasivayaCena(max);
+
+  // запоминаем режим, чтобы после перезагрузки открыть его же
+  localStorage.setItem("rezhim", rezhim);
+
+  sdelatKnopkiKategoriy();
+  sdelatStrany();
+  pokazatTovary();
+  pokazatKorzinu();
+}
+
+
+// =====================================================
+//  ТУМБЛЕР НА ТРИ ПОЛОЖЕНИЯ
+//  кружок можно тянуть или просто нажать на секцию;
+//  когда отпускаем — он прыгает в ближайшую секцию
+// =====================================================
+
+var RAZMER_KRUZHKA = 34;
+
+// x-координата центра секции n (0, 1 или 2)
+function centrSekcii(n) {
+  return (n + 0.5) * $("tumbler").offsetWidth / 3;
+}
+
+// в какой секции находится точка x
+function blizhaishayaSekciya(x) {
+  var n = Math.floor(x / ($("tumbler").offsetWidth / 3));
+  if (n < 0) n = 0;
+  if (n > 2) n = 2;
+  return n;
+}
+
+// сдвинуть кружок в точку x
+function dvigatKruzhok(x) {
+  $("tumbler-tochka").style.transform = "translateX(" + (x - RAZMER_KRUZHKA / 2) + "px)";
+}
+
+// поставить кружок в секцию n и подписать режим
+function postavitKruzhok(n) {
+  dvigatKruzhok(centrSekcii(n));
+  $("tumbler").setAttribute("aria-valuenow", n);
+  $("tumbler").setAttribute("aria-valuetext", NAZVANIE_REZHIMA[n]);
+  $("rezhim-slovo").innerHTML = NAZVANIE_REZHIMA[n];
+}
+
+// выбрали секцию n
+function vybratSekciyu(n) {
+  var novyi = REZHIMY[n];
+  if (novyi == rezhim) {
+    postavitKruzhok(n);
+    return;
+  }
+  // в 21+ пускаем только после проверки возраста
+  if (novyi == "21" && !vozrastProveren) {
+    postavitKruzhok(REZHIMY.indexOf(rezhim)); // кружок назад
+    otkrytOknoVozrasta();
+    return;
+  }
+  pereklyuchitRezhim(novyi);
+}
+
+// вешаем на тумблер мышь, палец и клавиатуру
+function nastroitTumbler() {
+  var tumbler = $("tumbler");
+  var tyanem = false;
+  var startX = 0;
+
+  // x внутри тумблера, не дальше центров крайних секций
+  function xVnutri(e) {
+    var x = e.clientX - tumbler.getBoundingClientRect().left;
+    if (x < centrSekcii(0)) x = centrSekcii(0);
+    if (x > centrSekcii(2)) x = centrSekcii(2);
+    return x;
+  }
+
+  // нажали
+  tumbler.addEventListener("pointerdown", function (e) {
+    tyanem = true;
+    startX = e.clientX;
+    tumbler.setPointerCapture(e.pointerId);
+    tumbler.classList.add("tyanem");
+  });
+
+  // тянем
+  tumbler.addEventListener("pointermove", function (e) {
+    if (!tyanem) return;
+    if (Math.abs(e.clientX - startX) < 3) return; // сдвиг меньше 3px — это просто клик
+    dvigatKruzhok(xVnutri(e));
+  });
+
+  // отпустили
+  tumbler.addEventListener("pointerup", function (e) {
+    if (!tyanem) return;
+    tyanem = false;
+    tumbler.classList.remove("tyanem");
+    vybratSekciyu(blizhaishayaSekciya(xVnutri(e)));
+  });
+
+  // жест прервался (например, пришёл звонок)
+  tumbler.addEventListener("pointercancel", function () {
+    tyanem = false;
+    tumbler.classList.remove("tyanem");
+    postavitKruzhok(REZHIMY.indexOf(rezhim));
+  });
+
+  // стрелки влево/вправо на клавиатуре
+  tumbler.addEventListener("keydown", function (e) {
+    var n = REZHIMY.indexOf(rezhim);
+    if (e.key == "ArrowRight" && n < 2) { vybratSekciyu(n + 1); e.preventDefault(); }
+    if (e.key == "ArrowLeft" && n > 0) { vybratSekciyu(n - 1); e.preventDefault(); }
+  });
+}
+
+
+// =====================================================
+//  КАТЕГОРИИ И ФИЛЬТРЫ
+// =====================================================
+
+// рисуем кнопки категорий
+function sdelatKnopkiKategoriy() {
+  var kategorii = kategoriiRezhima();
+  var html = "";
+  for (var i = 0; i < kategorii.length; i++) {
+    var klass = "kat-knopka";
+    if (kategorii[i].id == vybranayaKategoriya) klass += " aktiv";
+    if (kategorii[i].vazhno) klass += " vazhno";
+    html += '<button class="' + klass + '" onclick="vybratKategoriyu(\'' + kategorii[i].id + '\')">' + kategorii[i].nazvanie + '</button>';
+  }
+  $("kategorii").innerHTML = html;
+}
+
+function vybratKategoriyu(id) {
+  vybranayaKategoriya = id;
+  sdelatKnopkiKategoriy();
+  pokazatTovary();
+  window.scrollTo(0, 0);
+}
+
+// рисуем список стран (берём из товаров режима, без повторов, по алфавиту)
+function sdelatStrany() {
+  var tovary = tovaryRezhima();
+  var strany = [];
+  for (var i = 0; i < tovary.length; i++) {
+    if (strany.indexOf(tovary[i].strana) == -1) strany.push(tovary[i].strana);
+  }
+  strany.sort();
+
+  var html = '<label class="galka"><input type="radio" name="strana" checked onchange="vybratStranu(\'\')"><span class="kvadrat"></span>Все страны</label>';
+  for (var j = 0; j < strany.length; j++) {
+    html += '<label class="galka"><input type="radio" name="strana" onchange="vybratStranu(\'' + strany[j] + '\')"><span class="kvadrat"></span>' + strany[j] + '</label>';
+  }
+  $("strany").innerHTML = html;
+}
+
+function vybratStranu(strana) {
+  vybranayaStrana = strana;
+  pokazatTovary();
+}
+
+function polzunokDvigaetsya() {
+  maxCena = Number($("polzunok").value);
+  $("maxCena").innerHTML = krasivayaCena(maxCena);
+  pokazatTovary();
+}
+
+function galochkiIzmenilis() {
+  tolkoSkidka = $("galka-skidka").checked;
+  tolkoKz = $("galka-kz").checked;
+  tolkoEko = $("galka-eko").checked;
+  pokazatTovary();
+}
+
+function sortirovkaIzmenilas() {
+  sortirovka = $("sortirovka").value;
+  pokazatTovary();
+}
+
+function poiskIzmenilsya() {
+  tekstPoiska = $("poisk").value.trim().toLowerCase();
+  pokazatTovary();
+}
+
+
+// =====================================================
+//  ПОКАЗ ТОВАРОВ
+// =====================================================
+
+// HTML одной карточки товара
+function sdelatKartochku(tovar) {
+  var klass = "kartochka";
+  if (rezhim == "21") klass += " kartochka-21";
+  var html = '<div class="' + klass + '">';
+
+  // значки сверху: скидка и 21+
+  if (tovar.staraya_cena) {
+    var procent = Math.round((1 - tovar.cena / tovar.staraya_cena) * 100);
+    html += '<span class="skidka">−' + procent + '%</span>';
+  }
+  if (nuzhen21(tovar.kategoriya)) {
+    html += '<span class="metka-21">21+</span>';
+  }
+
+  // картинка, название, рейтинг · страна · объём
+  html += '<div class="kartinka" style="background:' + tovar.fon + '">' + tovar.kartinka + '</div>';
+  html += '<div class="nazvanie">' + tovar.nazvanie + '</div>';
+  html += '<div class="info"><span class="zvezda">★</span> <b>' + tovar.reiting.toFixed(1) + '</b> · ' + tovar.strana + ' · ' + tovar.edinica + '</div>';
+
+  // низ: цена (и старая цена, если есть скидка)
+  html += '<div class="niz"><div>';
+  html += '<div class="cena">' + krasivayaCena(tovar.cena) + '</div>';
+  if (tovar.staraya_cena) {
+    html += '<div class="stara-cena">' + krasivayaCena(tovar.staraya_cena) + '</div>';
+  }
+  html += '</div>';
+
+  // уже в корзине — счётчик «− 2 +», иначе кнопка «+»
+  if (korzina[tovar.id]) {
+    html += '<div class="schet-knopki"><button onclick="minus(' + tovar.id + ')">−</button><span>' + korzina[tovar.id] + '</span><button onclick="plus(' + tovar.id + ')">+</button></div>';
+  } else {
+    html += '<button class="dobavit" onclick="dobavitVKorzinu(' + tovar.id + ')">+</button>';
+  }
+
+  html += '</div></div>';
+  return html;
+}
+
+// сортировка по выбору в списке «Сортировка»
+function otsortirovat(spisok) {
+  if (sortirovka == "deshevle") spisok.sort(function (a, b) { return a.cena - b.cena; });
+  if (sortirovka == "dorozhe") spisok.sort(function (a, b) { return b.cena - a.cena; });
+  if (sortirovka == "reiting") spisok.sort(function (a, b) { return b.reiting - a.reiting; });
+  return spisok;
+}
+
+// HTML сетки из карточек
+function sdelatSetku(spisok) {
+  var html = '<div class="tovary">';
+  for (var i = 0; i < spisok.length; i++) {
+    html += sdelatKartochku(spisok[i]);
+  }
+  return html + '</div>';
+}
+
+// главная функция: фильтрует товары и выводит их на страницу
+function pokazatTovary() {
+  var tovary = tovaryRezhima();
+  var kategorii = kategoriiRezhima();
+
+  // 1. заголовок и описание над каталогом
+  if (vybranayaKategoriya == "vse") {
+    $("zagolovok").innerHTML = TEKSTY[rezhim].zagolovok;
+    $("opisanie").innerHTML = "";
+  } else {
+    for (var k = 0; k < kategorii.length; k++) {
+      if (kategorii[k].id == vybranayaKategoriya) {
+        $("zagolovok").innerHTML = kategorii[k].nazvanie;
+        $("opisanie").innerHTML = kategorii[k].opisanie || "";
+      }
+    }
+  }
+
+  // 2. оставляем только товары, которые подходят под все фильтры
+  var podhodyat = [];
+  for (var i = 0; i < tovary.length; i++) {
+    var t = tovary[i];
+    if (vybranayaKategoriya != "vse" && t.kategoriya != vybranayaKategoriya) continue;
+    if (tekstPoiska != "" && t.nazvanie.toLowerCase().indexOf(tekstPoiska) == -1) continue;
+    if (t.cena > maxCena) continue;
+    if (tolkoSkidka && !t.staraya_cena) continue;
+    if (tolkoKz && !t.kz) continue;
+    if (tolkoEko && !t.eko) continue;
+    if (vybranayaStrana != "" && t.strana != vybranayaStrana) continue;
+    podhodyat.push(t);
+  }
+
+  // 3а. ничего не нашлось
+  if (podhodyat.length == 0) {
+    $("katalog").innerHTML = '<div class="nichego"><div>' + TEKSTY[rezhim].nichego + '</div>Ничего не найдено. Попробуйте изменить фильтры.</div>';
+    return;
+  }
+
+  // 3б. выбрана одна категория — просто сетка
+  if (vybranayaKategoriya != "vse") {
+    $("katalog").innerHTML = sdelatSetku(otsortirovat(podhodyat));
+    return;
+  }
+
+  // 3в. «Все товары» — разбиваем по разделам-категориям
+  var html = "";
+  for (var n = 1; n < kategorii.length; n++) { // с 1, потому что 0 — это «Все товары»
+    var kat = kategorii[n];
+    var vRazdele = [];
+    for (var m = 0; m < podhodyat.length; m++) {
+      if (podhodyat[m].kategoriya == kat.id) vRazdele.push(podhodyat[m]);
+    }
+    if (vRazdele.length == 0) continue; // пустые разделы не показываем
+
+    html += '<div class="razdel' + (kat.ramka ? ' osobyi' : '') + '">';
+    html += '<div class="razdel-shapka"><h2>' + kat.nazvanie + '</h2><span class="razdel-chislo">' + vRazdele.length + '</span>';
+    html += '<button class="smotret" onclick="vybratKategoriyu(\'' + kat.id + '\')">Смотреть все →</button></div>';
+    if (kat.opisanie) {
+      html += '<p class="razdel-tekst">' + kat.opisanie + '</p>';
+    } else {
+      html += '<div style="height:8px"></div>';
+    }
+    html += sdelatSetku(otsortirovat(vRazdele));
+    html += '</div>';
+  }
+  $("katalog").innerHTML = html;
+}
+
+
+// =====================================================
+//  КОРЗИНА
+// =====================================================
+
+// сохранить корзину и перерисовать карточки и корзину
+function obnovitKorzinu() {
+  localStorage.setItem("korzina", JSON.stringify(korzina));
+  pokazatTovary();
+  pokazatKorzinu();
+}
+
+function dobavitVKorzinu(id) {
+  korzina[id] = (korzina[id] || 0) + 1; // если товара не было — станет 1
+  obnovitKorzinu();
+  pokazatSoobshenie(naitiTovar(id).kartinka + " Добавлено в корзину");
+}
+
+function plus(id) {
+  korzina[id] = korzina[id] + 1;
+  obnovitKorzinu();
+}
+
+function minus(id) {
+  korzina[id] = korzina[id] - 1;
+  if (korzina[id] <= 0) delete korzina[id]; // дошли до нуля — убираем товар
+  obnovitKorzinu();
+}
+
+// сумма товаров в корзине
+function summaKorziny() {
+  var summa = 0;
+  for (var id in korzina) {
+    summa += naitiTovar(id).cena * korzina[id];
+  }
+  return summa;
+}
+
+// рисуем содержимое корзины и итог
+function pokazatKorzinu() {
+  var vsegoShtuk = 0;
+  var estAlkogol = false;
+  var html = "";
+
+  for (var id in korzina) {
+    var tovar = naitiTovar(id);
+    var kolvo = korzina[id];
+    vsegoShtuk += kolvo;
+    if (nuzhen21(tovar.kategoriya)) estAlkogol = true;
+
+    html += '<div class="stroka-korziny">';
+    html += '<div class="mini-kartinka" style="background:' + tovar.fon + '">' + tovar.kartinka + '</div>';
+    html += '<div class="tekst">' + tovar.nazvanie + '<small>' + krasivayaCena(tovar.cena) + ' / ' + tovar.edinica + '</small></div>';
+    html += '<div class="mini-knopki"><button onclick="minus(' + id + ')">−</button><span>' + kolvo + '</span><button onclick="plus(' + id + ')">+</button></div>';
+    html += '<div class="stroka-summa">' + krasivayaCena(tovar.cena * kolvo) + '</div>';
+    html += '</div>';
+  }
+
+  // число на кнопке корзины в шапке
+  $("schet").innerHTML = vsegoShtuk;
+
+  // корзина пустая
+  if (vsegoShtuk == 0) {
+    $("spisok-korziny").innerHTML = '<div class="pusto">' + TEKSTY[rezhim].pusto + '</div>';
+    $("itog-korziny").style.display = "none";
+    return;
+  }
+
+  $("spisok-korziny").innerHTML = html;
+
+  // доставка бесплатная от BESPLATNAYA_DOSTAVKA
+  var summa = summaKorziny();
+  var dostavka = (summa >= BESPLATNAYA_DOSTAVKA) ? 0 : CENA_DOSTAVKI;
+
+  $("summa-tovarov").innerHTML = krasivayaCena(summa);
+  if (dostavka == 0) {
+    $("summa-dostavki").innerHTML = "Бесплатно";
+    $("dostavka-fraza").innerHTML = "🎉 Доставка бесплатно!";
+  } else {
+    $("summa-dostavki").innerHTML = krasivayaCena(dostavka);
+    $("dostavka-fraza").innerHTML = "Добавьте ещё на " + krasivayaCena(BESPLATNAYA_DOSTAVKA - summa) + " для бесплатной доставки";
+  }
+  $("itogo").innerHTML = krasivayaCena(summa + dostavka);
+
+  // напоминание про документ, если в корзине алкоголь или табак
+  $("pasport-fraza").style.display = estAlkogol ? "block" : "none";
+  $("itog-korziny").style.display = "flex";
+}
+
+function otkrytKorzinu() {
+  $("korzina").classList.add("otkryta");
+  $("fon-temnyi").style.display = "block";
+}
+
+function zakrytKorzinu() {
+  $("korzina").classList.remove("otkryta");
+  $("fon-temnyi").style.display = "none";
+}
+
+function oformitZakaz() {
+  var summa = summaKorziny();
+  if (summa < BESPLATNAYA_DOSTAVKA) summa += CENA_DOSTAVKI;
+  pokazatSoobshenie("✅ Заказ оформлен на " + krasivayaCena(summa));
+  korzina = {};
+  obnovitKorzinu();
+  setTimeout(zakrytKorzinu, 700);
+}
+
+
+// =====================================================
+//  ПРОВЕРКА ВОЗРАСТА
+// =====================================================
+
+// заполняем списки дней, месяцев и лет (100 лет назад от текущего)
+function zapolnitDatu() {
+  var mesyacy = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+
+  var dni = '<option value="">День</option>';
+  for (var i = 1; i <= 31; i++) {
+    dni += '<option value="' + i + '">' + i + '</option>';
+  }
+  $("den").innerHTML = dni;
+
+  var mes = '<option value="">Месяц</option>';
+  for (var j = 0; j < 12; j++) {
+    mes += '<option value="' + (j + 1) + '">' + mesyacy[j] + '</option>';
+  }
+  $("mesyac").innerHTML = mes;
+
+  var seichasGod = new Date().getFullYear();
+  var goda = '<option value="">Год</option>';
+  for (var g = seichasGod; g > seichasGod - 100; g--) {
+    goda += '<option value="' + g + '">' + g + '</option>';
+  }
+  $("god").innerHTML = goda;
+}
+
+// открыть окно с чистыми полями
+function otkrytOknoVozrasta() {
+  $("den").value = "";
+  $("mesyac").value = "";
+  $("god").value = "";
+  $("oshibka").innerHTML = "";
+  $("knopka-ok").disabled = false;
+  $("okno-21").style.display = "flex";
+}
+
+// нажали «Мне есть 21 — войти»
+function proveritVozrast() {
+  var den = Number($("den").value);
+  var mesyac = Number($("mesyac").value);
+  var god = Number($("god").value);
+
+  // заполнено не всё
+  if (den == 0 || mesyac == 0 || god == 0) {
+    $("oshibka").innerHTML = "Укажите полную дату рождения";
+    return;
+  }
+
+  // такой даты нет (например, 31 февраля — JS превратит её в 3 марта)
+  var data = new Date(god, mesyac - 1, den);
+  if (data.getMonth() != mesyac - 1) {
+    $("oshibka").innerHTML = "Такой даты не существует";
+    return;
+  }
+
+  // считаем полных лет: если день рождения в этом году ещё не наступил — минус год
+  var segodnya = new Date();
+  var vozrast = segodnya.getFullYear() - god;
+  var mesyacSeichas = segodnya.getMonth() + 1;
+  if (mesyacSeichas < mesyac || (mesyacSeichas == mesyac && segodnya.getDate() < den)) {
+    vozrast = vozrast - 1;
+  }
+
+  // слишком молод — блокируем кнопку
+  if (vozrast < MIN_VOZRAST) {
+    $("oshibka").innerHTML = "Доступ запрещён: вам ещё нет " + MIN_VOZRAST + " года.";
+    $("knopka-ok").disabled = true;
+    return;
+  }
+
+  // всё хорошо — запоминаем и пускаем в 21+
+  vozrastProveren = true;
+  localStorage.setItem("vozrastProveren", "da");
+  $("okno-21").style.display = "none";
+  pereklyuchitRezhim("21");
+  pokazatSoobshenie("🔓 Возраст подтверждён. Добро пожаловать!");
+}
+
+// нажали «Вернуться назад»
+function otmenaVozrast() {
+  $("okno-21").style.display = "none";
+  postavitKruzhok(REZHIMY.indexOf(rezhim));
+}
+
+
+// =====================================================
+//  ВСПЛЫВАЮЩЕЕ СООБЩЕНИЕ (исчезает через 1.8 секунды)
+// =====================================================
+var taimer;
+function pokazatSoobshenie(tekst) {
+  var s = $("podskazka");
+  s.innerHTML = tekst;
+  s.style.display = "block";
+  clearTimeout(taimer);
+  taimer = setTimeout(function () {
+    s.style.display = "none";
+  }, 1800);
+}
+
+// Esc закрывает окно возраста или корзину
+document.onkeydown = function (e) {
+  if (e.key != "Escape") return;
+  if ($("okno-21").style.display == "flex") {
+    otmenaVozrast();
+  } else {
+    zakrytKorzinu();
+  }
+};
+
+
+// =====================================================
+//  ЗАПУСК СТРАНИЦЫ
+// =====================================================
+
+// достаём из памяти браузера корзину и проверку возраста
+if (localStorage.getItem("korzina")) {
+  korzina = JSON.parse(localStorage.getItem("korzina"));
+}
+if (localStorage.getItem("vozrastProveren") == "da") {
+  vozrastProveren = true;
+}
+
+zapolnitDatu();
+nastroitTumbler();
+
+// открываем режим, который был в прошлый раз (21+ — только если возраст уже проверен)
+var sohranennyiRezhim = localStorage.getItem("rezhim");
+if (sohranennyiRezhim == "21" && vozrastProveren) {
+  pereklyuchitRezhim("21");
+} else if (sohranennyiRezhim == "vrednoe") {
+  pereklyuchitRezhim("vrednoe");
+} else {
+  pereklyuchitRezhim("poleznoe");
+}
+</script>
+
+</body>
+</html>

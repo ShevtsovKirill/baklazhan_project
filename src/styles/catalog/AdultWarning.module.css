@@ -1,0 +1,11 @@
+/* Предупреждение про алкоголь (только в режиме 21+) */
+.warning {
+  margin-top: 12px;
+  background: #2a1206;
+  border: 1px solid #5a2a0e;
+  color: #ffb38a;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  font-size: 13px;
+}

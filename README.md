@@ -1,100 +1,100 @@
-# 🍆 Baklazhan Market
+# 🍆 Баклажан KZ — интернет-магазин на Next.js
 
-**Baklazhan Market** is an original online grocery store with its own product vision, brand identity and interface — an independent project built from scratch, not based on or borrowed from any existing service.
+Перенос сайта «Баклажан Маркет» из одного HTML-файла на **Next.js 16 (App Router) + TypeScript**.
+Дизайн и поведение — один в один с исходной вёрсткой; изменилась только архитектура.
 
-The whole brand is our own: a dark theme with a vivid violet accent and the eggplant as our mascot. Everything lives in **one self-contained `index.html`** file — markup, styles and logic are inline, with no build step, no backend and no external dependencies.
-
----
-
-## ✨ Features
-
-- **Product catalog** — 30 items across 8 categories (vegetables, fruits, greens, berries, dairy, bakery, drinks).
-- **Live search** by product name.
-- **Filters** — price slider, "on sale only", "Kazakhstan 🇰🇿", "eco / farm", country selector.
-- **Sorting** — recommended / cheapest / most expensive / by rating.
-- **Shopping cart** — slide-over drawer with quantity controls, live totals, **free delivery over 8 000 ₸**, and checkout.
-- **Persistent cart** — saved in the browser via `localStorage`, survives page reloads.
-- **Responsive** — adapts from desktop down to phone width.
-- **Dark violet theme** with friendly rounded typography.
-
----
-
-## 🎨 Design & originality
-
-The design, color system, layout, copy and brand concept were created by our team specifically for this project. The violet palette, the eggplant mascot, the component styling and the overall look are our own original work — nothing here is copied from another product.
-
----
-
-## 🛠 Tech
-
-- Plain **HTML + CSS + vanilla JavaScript** — no frameworks, no bundler.
-- Google Fonts (Baloo 2 + Manrope) loaded via `<link>`; everything else is inline.
-- Product images are emoji on soft color tiles (no image assets to host).
-
----
-
-## 🚀 Run locally
-
-Just open the file in a browser:
+## Запуск
 
 ```bash
-open index.html        # macOS
-# or double-click the file
+npm install      # один раз — установить зависимости
+npm run dev      # режим разработки → http://localhost:3000
+npm run build    # сборка для продакшена
+npm run start    # запуск собранной версии
+npm run lint     # проверка кода
 ```
 
-> Make sure the file keeps its `<meta charset="utf-8">` tag — without it, browsers may garble the Cyrillic text when opening via `file://`.
+Нужен Node.js 20.9 или новее.
 
----
+## Страницы
 
-## 🌐 Deploy
+| Адрес                  | Что открывается                                        |
+| ---------------------- | ------------------------------------------------------ |
+| `/`                    | сразу перекидывает в режим, открытый в прошлый раз      |
+| `/healthy`             | режим «Полезное», все товары по разделам               |
+| `/junk`                | режим «Вредное»                                        |
+| `/adult`               | режим «21+» (только после проверки возраста)           |
+| `/healthy/vegetables`  | одна категория режима (так же для всех категорий)      |
+| любой другой адрес     | страница 404                                           |
 
-This is a pure static page, so any static host works. Rename the file to **`index.html`** first.
+Тумблер в шапке переключает режимы, кнопки категорий — страницы категорий.
+Кнопка «Назад» в браузере работает, ссылкой на категорию можно поделиться.
+Все страницы собираются заранее (статическая генерация), сервер с базой данных не нужен.
 
-**Easiest — Netlify Drop**
-1. Go to [app.netlify.com/drop](https://app.netlify.com/drop)
-2. Drag & drop `index.html`
-3. Get a live URL instantly.
-
-**With version history — GitHub Pages**
-```bash
-git init && git add index.html && git commit -m "baklazhan market"
-git branch -M main
-git remote add origin https://github.com/<user>/<repo>.git
-git push -u origin main
-```
-Then: **Settings → Pages → Source: `main` / root**.
-
-Other good free options: **Cloudflare Pages**, **Vercel**. No Node, server, or database required.
-
----
-
-## 📁 Structure
+## Структура проекта
 
 ```
-index.html        # the entire app (HTML + CSS + JS inline)
-README.md         # this file
+src/
+├── app/                      Страницы (роутинг Next.js: папка = адрес)
+│   ├── layout.tsx            Корневой каркас: шрифты, стили, корзина, окно 21+, всплывашка
+│   ├── page.tsx              «/» — редирект в последний режим
+│   ├── not-found.tsx         Страница 404
+│   └── [mode]/               /healthy, /junk, /adult
+│       ├── layout.tsx        Шапка, крошки, категории, фильтры, подвал — общие для режима
+│       ├── page.tsx          Каталог «Все товары»
+│       └── [category]/
+│           └── page.tsx      Каталог одной категории
+│
+├── components/               React-компоненты, сгруппированы по частям сайта
+│   ├── layout/               Header, Footer, Logo, SearchBar
+│   ├── mode-switch/          ModeSwitch — тумблер Полезное / Вредное / 21+
+│   ├── catalog/              Каталог: категории, разделы, сетка, карточка товара, сортировка
+│   ├── filters/              Левая колонка: цена, подборки, страны
+│   ├── cart/                 Корзина: кнопка в шапке, выезжающая панель, строки, итог
+│   ├── age-gate/             Окно проверки возраста и защита режима 21+
+│   └── ui/                   Общие мелкие элементы: кнопка, всплывашка, иконки
+│
+├── styles/                   ВСЕ стили — отдельно от компонентов
+│   ├── fonts.css             Подключение шрифтов (Baloo 2, Manrope)
+│   ├── theme.css             Цвета и переменные темы (var(--color-primary) и т.д.)
+│   ├── globals.css           Базовые правила для всего сайта
+│   └── <раздел>/*.module.css Стили компонентов — папки повторяют components/
+│
+├── data/                     Данные магазина
+│   ├── modes.ts              Режимы и их тексты (заголовки, подписи, слоганы)
+│   ├── categories.ts         Категории каждого режима
+│   └── products/             Товары: healthy.ts, junk.ts, adult.ts
+│
+├── context/                  Общее состояние (React Context)
+│   ├── CartContext.tsx       Корзина
+│   ├── CatalogFiltersContext.tsx  Поиск, фильтры, сортировка
+│   ├── AgeVerificationContext.tsx Проверка возраста
+│   └── ToastContext.tsx      Всплывающее сообщение
+│
+├── lib/                      Чистые функции без React-разметки
+│   ├── catalog.ts            Поиск товаров, фильтрация, сортировка
+│   ├── cart.ts               Суммы корзины и доставка
+│   ├── age.ts                Проверка даты рождения
+│   ├── storage.ts            Что хранится в localStorage
+│   ├── routes.ts             Адреса страниц
+│   └── format.ts, classNames.ts, persistentStore.ts
+│
+├── hooks/                    Свои React-хуки (Esc, текущий режим)
+├── config/shop.ts            Настройки: возраст 21, бесплатная доставка от 8 000 ₸, цена доставки
+└── types/catalog.ts          TypeScript-типы: Product, Category, ModeConfig…
 ```
 
----
+**Правило:** компонент `components/cart/CartDrawer.tsx` → его стили в `styles/cart/CartDrawer.module.css`.
 
-## ⚠️ Limitations
+## Частые задачи
 
-This is a **front-end demo**. It has no backend, so:
-- The cart lives only in the visitor's browser (`localStorage`).
-- Checkout shows a confirmation toast but does **not** place a real order or process payment.
-- Products are hardcoded in the JS array.
+- **Добавить товар** — новая строка в `src/data/products/<режим>.ts`.
+- **Добавить категорию** — строка в `src/data/categories.ts`; страница `/<режим>/<slug>` появится сама.
+- **Поменять цвет** — `src/styles/theme.css`.
+- **Поменять порог бесплатной доставки или возраст** — `src/config/shop.ts`.
+- **Поменять тексты режима** (подвал, слоган, подсказка поиска) — `src/data/modes.ts`.
 
----
+## Что в браузере посетителя
 
-## 🧭 Roadmap
-
-- [ ] Backend for products & orders (e.g. Supabase / Firebase)
-- [ ] Payment integration (Kaspi, Stripe)
-- [ ] User accounts & order history
-- [ ] Admin panel for the catalog
-- [ ] Mobile app (iOS / Android)
-
----
-
-*An original project · 2026 · © Baklazhan Market. All rights reserved.*
-
+В `localStorage` хранятся корзина (`baklazhan:cart`), подтверждение возраста
+(`baklazhan:age-verified`) и последний режим (`baklazhan:last-mode`). Бэкенда нет —
+оформление заказа показывает подтверждение, но заказ никуда не отправляется.

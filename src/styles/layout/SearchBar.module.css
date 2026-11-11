@@ -1,0 +1,39 @@
+/* Строка поиска в шапке */
+.search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1.5px solid transparent;
+  border-radius: 14px;
+  padding: 0 16px;
+  height: 46px;
+}
+
+.search:focus-within {
+  border-color: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.24);
+}
+
+.input {
+  border: none;
+  outline: none;
+  background: none;
+  width: 100%;
+  font-size: 15px;
+  font-family: inherit;
+  color: white;
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* телефон: поиск на всю ширину под логотипом и кнопками */
+@media (max-width: 620px) {
+  .search {
+    order: 3;
+    flex-basis: 100%;
+  }
+}

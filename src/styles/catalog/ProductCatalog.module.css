@@ -1,0 +1,21 @@
+/* Заголовок каталога + сортировка */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-heading);
+  margin: 0;
+  font-size: 30px;
+}
+
+.description {
+  color: var(--color-muted);
+  font-weight: 600;
+  margin: 0 0 16px;
+}

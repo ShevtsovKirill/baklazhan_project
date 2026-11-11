@@ -1,0 +1,32 @@
+/* Логотип: кружок с баклажаном + надпись */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 26px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  display: grid;
+  place-items: center;
+  font-size: 19px;
+}
+
+.accent {
+  color: #e2ccff;
+  font-style: normal;
+}
+
+@media (max-width: 620px) {
+  .logo {
+    font-size: 22px;
+  }
+}

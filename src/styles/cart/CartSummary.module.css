@@ -1,0 +1,46 @@
+/* Итог внизу корзины: суммы и кнопка «Оформить» */
+.summary {
+  background: var(--color-surface);
+  border-top: 1px solid var(--color-border);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.row span:last-child {
+  color: var(--color-text);
+}
+
+.row.total {
+  color: var(--color-text);
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.row.total span:last-child {
+  font-family: var(--font-heading);
+  font-size: 24px;
+}
+
+.deliveryNote {
+  font-size: 12px;
+  color: var(--color-primary-text);
+  font-weight: 700;
+  text-align: center;
+}
+
+.idNote {
+  font-size: 12px;
+  color: #ff9f6b;
+  font-weight: 700;
+  text-align: center;
+}

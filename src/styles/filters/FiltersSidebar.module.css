@@ -1,0 +1,13 @@
+/* Левая колонка с фильтрами */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* планшет и телефон: фильтры прячем */
+@media (max-width: 860px) {
+  .sidebar {
+    display: none;
+  }
+}

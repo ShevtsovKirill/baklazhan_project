@@ -1,0 +1,64 @@
+/* Раздел каталога на странице «Все товары»: заголовок, счётчик, «Смотреть все», товары */
+.section {
+  margin-bottom: 34px;
+}
+
+/* особый раздел в рамке (салаты, десерты, закуски) */
+.section.framed {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-primary-soft);
+  border-radius: 22px;
+  padding: 18px;
+  /* карточки внутри рамки — на сером фоне (см. ProductCard.module.css) */
+  --card-background: var(--color-bg);
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 6px 0 4px;
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 23px;
+  margin: 0;
+}
+
+.count {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-text);
+  font-weight: 800;
+  font-size: 12px;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.seeAll {
+  margin-left: auto;
+  color: var(--color-primary-text);
+  font-weight: 800;
+  font-size: 13px;
+  text-decoration: none;
+  padding: 1px 6px; /* такие же отступы, как у кнопки в исходной вёрстке */
+}
+
+.text {
+  color: var(--color-muted);
+  font-weight: 600;
+  font-size: 13px;
+  margin: 0 0 12px;
+}
+
+/* отступ вместо описания, если его нет */
+.spacer {
+  height: 8px;
+}
+
+@media (max-width: 620px) {
+  .section.framed {
+    padding: 12px;
+  }
+}

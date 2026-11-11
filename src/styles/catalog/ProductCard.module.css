@@ -1,0 +1,208 @@
+/* =====================================================
+   КАРТОЧКА ТОВАРА
+   ===================================================== */
+.card {
+  /* --card-background задаёт раздел в рамке (CatalogSection.module.css) */
+  background: var(--card-background, var(--color-surface));
+  border-radius: 18px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.14s, box-shadow 0.14s;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* квадрат с эмодзи товара (цвет фона задаётся у каждого товара — tileColor) */
+.image {
+  aspect-ratio: 1;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 76px;
+  margin-bottom: 12px;
+}
+
+/* значок скидки слева сверху */
+.discount {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #ff5a3c;
+  color: white;
+  font-weight: 800;
+  font-size: 12px;
+  padding: 4px 9px;
+  border-radius: 8px;
+}
+
+/* значок 21+ справа сверху */
+.ageBadge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-weight: 800;
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 7px;
+}
+
+/* название и строка «★ рейтинг · страна · объём» */
+.name {
+  font-weight: 700;
+  font-size: 14.5px;
+  line-height: 1.3;
+  margin-bottom: 8px;
+  min-height: 38px;
+}
+
+.info {
+  font-size: 12.5px;
+  color: var(--color-muted);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.star {
+  color: #ffb020;
+}
+
+.rating {
+  color: var(--color-text);
+}
+
+/* низ карточки: цена слева, кнопка справа */
+.bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.price {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.oldPrice {
+  font-size: 12px;
+  color: var(--color-muted);
+  text-decoration: line-through;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+/* кнопка «+» (товара ещё нет в корзине) */
+.addButton {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-text);
+  font-size: 26px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.addButton:hover {
+  background: var(--color-primary);
+  color: white;
+}
+
+/* счётчик «− 2 +» (товар уже в корзине) */
+.stepper {
+  display: flex;
+  align-items: center;
+  background: var(--color-primary);
+  border-radius: 13px;
+  height: 44px;
+  color: white;
+  font-weight: 800;
+  overflow: hidden;
+}
+
+.stepper button {
+  width: 38px;
+  height: 44px;
+  color: white;
+  font-size: 20px;
+}
+
+.stepper button:hover {
+  background: var(--color-primary-dark);
+}
+
+.stepper span {
+  min-width: 30px;
+  text-align: center;
+  font-size: 15px;
+}
+
+/* =====================================================
+   КАРТОЧКА В РЕЖИМЕ 21+
+   светлая с винным оттенком и тонкой красной полоской снизу
+   ===================================================== */
+.card.adult {
+  background: linear-gradient(180deg, #ffffff 0%, #fff4f6 100%);
+  border: 1px solid #f6d5dc;
+  box-shadow: inset 0 -3px 0 #e5243b; /* красная полоска снизу */
+  overflow: hidden;
+}
+
+.card.adult:hover {
+  border-color: #eeb3c0;
+  box-shadow: inset 0 -3px 0 #e5243b, 0 12px 28px rgba(155, 27, 58, 0.14);
+}
+
+.adult .image {
+  background: radial-gradient(circle at 50% 40%, #ffffff 0%, #fbe8ec 75%);
+  border: 1px solid #f6d5dc;
+}
+
+.adult .rating {
+  color: #9b1b3a;
+}
+
+.adult .price {
+  color: #9b1b3a;
+}
+
+.adult .ageBadge {
+  background: #e5243b;
+  border-color: transparent;
+}
+
+.adult .addButton {
+  background: #fbe3e8;
+  color: #c41e3a;
+}
+
+.adult .addButton:hover {
+  background: #c41e3a;
+  color: #ffffff;
+}
+
+.adult .stepper {
+  background: #c41e3a;
+}
+
+.adult .stepper button:hover {
+  background: #9b1b3a;
+}
+
+/* телефон: эмодзи поменьше */
+@media (max-width: 620px) {
+  .image {
+    font-size: 56px;
+  }
+}

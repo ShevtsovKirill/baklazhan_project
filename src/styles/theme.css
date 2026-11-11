@@ -1,0 +1,34 @@
+/* =====================================================
+   ТЕМА САЙТА
+   Все цвета в одном месте, дальше они используются как var(--имя).
+   Сами шрифты подключаются в fonts.css.
+   ===================================================== */
+
+:root {
+  /* фиолетовый */
+  --color-primary: #8b2fff;                       /* главный фиолетовый */
+  --color-primary-dark: #5b12c4;                  /* тёмный фиолетовый (градиенты, наведение) */
+  --color-primary-text: #7c3aed;                  /* фиолетовый для текста */
+  --color-primary-soft: rgba(139, 47, 255, 0.11); /* бледный фиолетовый фон */
+  --color-primary-hover: #f1e8ff;                 /* фон кнопки корзины при наведении */
+
+  /* фоны и текст */
+  --color-bg: #f4f4f7;          /* фон страницы */
+  --color-surface: #ffffff;     /* фон карточек и блоков */
+  --color-track: #ececf1;       /* дорожка ползунка */
+  --color-text: #1d1d1f;        /* основной текст */
+  --color-muted: #6e6e76;       /* второстепенный текст */
+  --color-border: #e4e4ea;      /* рамки */
+
+  /* шапка, подвал и шапка корзины */
+  --gradient-brand: linear-gradient(90deg, var(--color-primary-dark), var(--color-primary));
+
+  --shadow-hover: 0 10px 30px rgba(50, 20, 100, 0.10); /* тень при наведении */
+
+  /* шрифты: Baloo 2 для заголовков и цен, Manrope для всего остального */
+  --font-heading: 'Baloo 2', Arial, sans-serif;
+  --font-body: 'Manrope', Arial, sans-serif;
+
+  /* ширина контента */
+  --page-width: 1240px;
+}

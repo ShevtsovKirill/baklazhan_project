@@ -1,0 +1,11 @@
+/* Хлебные крошки: «Главная · ... · Каталог» */
+.breadcrumbs {
+  padding: 18px 0 4px;
+  font-size: 13px;
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.current {
+  color: var(--color-text);
+}

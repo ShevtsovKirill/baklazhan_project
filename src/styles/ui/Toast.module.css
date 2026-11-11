@@ -1,0 +1,14 @@
+/* Всплывающее сообщение внизу экрана («Добавлено в корзину») */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  background: var(--color-text);
+  color: var(--color-bg);
+  padding: 13px 22px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 95;
+}
